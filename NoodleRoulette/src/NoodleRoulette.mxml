@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="965" height="400"
+				styleName="background">
+	<mx:Style source="assets/style.css"/>
+	<mx:Script>
+		<![CDATA[
+			function startRoullete():void {
+				var timer:Timer = new Timer(1000, 0);
+				timer.addEventListener(TimerEvent.TIMER, onTimer);
+			}
+			
+			function onTimer(event:TimerEvent) {
+				var item:Item = Item.generateItem(Math.round(Math.random() * 10) % 10);
+				var image:Image = new Image();
+				image.width = item.x;
+				image.height = item.y;
+				image. = item.styleName;
+				var ellipseMove:EllipseMove = new EllipseMove(	
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Canvas x="18" y="9" width="708" height="383" styleName="gamePlayArea"
+			   horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
+	
+	<mx:Button x="10" y="10" label="Button" click="startRoullete()"/>
+	
+</mx:Application>
