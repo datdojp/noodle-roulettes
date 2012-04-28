@@ -20,6 +20,7 @@ package
 		public var dInterval:int;	
 		
 		public var x:int;
+		public var isRunning:Boolean = false;
 		
 		public function EllipseMove() {
 			this.move = new Move();
@@ -56,6 +57,7 @@ package
 		{
 			this.x = this.fromX;
 			var y = getY(this.x);
+			this.move.target.visible = true;
 			this.move.target.x = getRealX(this.x);
 			this.move.target.y = getRealY(y);
 			this.move.xFrom = getRealX(this.x);
@@ -63,6 +65,7 @@ package
 			this.move.xTo = getRealX(this.x);
 			this.move.yTo = getRealY(y);
 			this.move.duration = 0;
+			this.isRunning = true;
 			this.move.addEventListener(EffectEvent.EFFECT_END, onRepeat);
 			this.move.play();
 		}
@@ -73,6 +76,7 @@ package
 				(this.x > this.a || this.x < -this.a) ) {
 				
 				this.move.target.visible = false;
+				this.isRunning = false;
 				return;
 			}
 			this.x += this.dX;

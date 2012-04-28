@@ -11,10 +11,12 @@
 			function startRoullete():void {
 				var timer:Timer = new Timer(1000, 0);
 				timer.addEventListener(TimerEvent.TIMER, onTimer);
+				timer.start();
 			}
 			
 			function onTimer(event:TimerEvent) {
-				var item:Item = itemManager.allocateItem(Math.round(Math.random() * 10));
+				var item:Item = itemManager.allocateItem(Math.floor((Math.random() * 10));
+				gamePlayArea.addChild(item.image);
 				initForFrontBelt(item.moveEffect);
 				item.moveEffect.start();
 			}
@@ -23,7 +25,7 @@
 				if (ellipseMove != null) {
 					var center:Point = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2);
 					var a:int = gamePlayArea.width / 2 + 100;
-					var b:int = 200;
+					var b:int = 150;
 					ellipseMove.init(
 						ellipseMove.move.target, 
 						center, 

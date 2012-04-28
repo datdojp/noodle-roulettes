@@ -10,8 +10,6 @@ package
 		
 		public var score:int;
 		public var isSpecial:Boolean;
-		public var isUsed:Boolean = false;
-		
 		public function Item() {
 		}
 		
@@ -33,6 +31,10 @@ package
 			return (new Item()).init(
 				this.score, this.image.width, this.image.height, 
 				this.image.source as BitmapAsset, this.isSpecial);
+		}
+		
+		public function isUsed():Boolean {
+			return this.moveEffect.isRunning == true;
 		}
 	}
 }
