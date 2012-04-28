@@ -50,17 +50,17 @@ package
 		private var item11ImgCls:Class;
 		
 		private var TEMPLATE_ITEMS:Array = new Array(
-			(new Item()).init(10, 50, 50, new item01ImgCls()),
-			(new Item()).init(10, 50, 50, new item02ImgCls()),
-			(new Item()).init(10, 50, 50, new item03ImgCls()),
-			(new Item()).init(10, 50, 50, new item04ImgCls()),
-			(new Item()).init(10, 50, 50, new item05ImgCls()),
-			(new Item()).init(0, 50, 50, new item06ImgCls(), true),
-			(new Item()).init(10, 50, 50, new item07ImgCls()),
-			(new Item()).init(10, 50, 50, new item08ImgCls()),
-			(new Item()).init(10, 50, 50, new item09ImgCls()),
-			(new Item()).init(10, 50, 50, new item10ImgCls()),
-			(new Item()).init(10, 50, 50, new item11ImgCls())
+			(new Item()).init(10, 50, 50,item01ImgCls),
+			(new Item()).init(10, 50, 50,item02ImgCls),
+			(new Item()).init(10, 50, 50,item03ImgCls),
+			(new Item()).init(10, 50, 50,item04ImgCls),
+			(new Item()).init(10, 50, 50,item05ImgCls),
+			(new Item()).init(0, 50, 50,item06ImgCls, true),
+			(new Item()).init(10, 50, 50,item07ImgCls),
+			(new Item()).init(10, 50, 50,item08ImgCls),
+			(new Item()).init(10, 50, 50,item09ImgCls),
+			(new Item()).init(10, 50, 50,item10ImgCls),
+			(new Item()).init(10, 50, 50,item11ImgCls)
 		);
 		
 		private var items:ArrayCollection;
@@ -68,12 +68,14 @@ package
 		public function ItemManager() {
 			items = new ArrayCollection();
 			for(var i:int = 0; i < TEMPLATE_ITEMS.length; i++) {
-				items.addItem(new ArrayCollection());	
+				var anArray:ArrayCollection = new ArrayCollection();
+//				anArray.addItem(TEMPLATE_ITEMS[i]);
+				items.addItem(anArray);	
 			}
 		}
 		
-		public function allocateItem(oneBasedIdx:int):Item {
-			var idx:int = oneBasedIdx - 1;
+		var itemCount = 0;
+		public function allocateItem(idx:int):Item {
 			var itemsOfIdx:ArrayCollection = items.getItemAt(idx) as ArrayCollection;
 			for (var i:int = 0; i < itemsOfIdx.length; i++) {
 				var anItem:Item = itemsOfIdx.getItemAt(i) as Item;
@@ -85,6 +87,10 @@ package
 			//no item available --> create new item
 			var newItem:Item = (TEMPLATE_ITEMS[idx] as Item).clone();
 			itemsOfIdx.addItem(newItem);
+			itemCount++;
+			if (NoodleRoulette.instance != null) {
+				NoodleRoulette.instance.outDebug(itemCount.toString());
+			}
 			return newItem;
 		}
 	}
