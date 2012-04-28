@@ -8,23 +8,31 @@ package
 	
 	public class EllipseMove
 	{
-		private var move:Move;
-		private var center:Point;
-		private var a:int;
-		private var b:int;
-		private var a2:int;
-		private var b2:int;
-		private var fromX;
-		private var toX;
-		private var dX:int;
-		private var dInterval:int;	
+		public var move:Move;
+		public var center:Point;
+		public var a:int;
+		public var b:int;
+		public var a2:int;
+		public var b2:int;
+		public var fromX;
+		public var toX;
+		public var dX:int;
+		public var dInterval:int;	
 		
-		private var x:int;
+		public var x:int;
 		
-		public function EllipseMove(target:Object, center:Point, a:int, b:int, fromX:int, toX:int, 
-									dX:int, dInterval:int):void
-		{
+		public function EllipseMove() {
 			this.move = new Move();
+		}
+		
+		public function setTarget(target:Object):void {
+			this.move.target = target;
+		}
+								  
+		
+		public function init(target:Object, center:Point, a:int, b:int, fromX:int, toX:int, 
+									dX:int = 5, dInterval:int = 50):EllipseMove
+		{
 			this.move.target = target;
 			this.move.duration = dInterval;
 			this.center = center;
@@ -40,6 +48,8 @@ package
 				this.dX = -dX;
 			}
 			this.dInterval = dInterval;
+			
+			return this;
 		}
 		
 		public function start()

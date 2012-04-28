@@ -4,23 +4,48 @@
 	<mx:Style source="assets/style.css"/>
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.Image;
+			
+			var itemManager:ItemManager = new ItemManager();
+			
 			function startRoullete():void {
 				var timer:Timer = new Timer(1000, 0);
 				timer.addEventListener(TimerEvent.TIMER, onTimer);
 			}
 			
 			function onTimer(event:TimerEvent) {
-				var item:Item = Item.generateItem(Math.round(Math.random() * 10) % 10);
-				var image:Image = new Image();
-				image.width = item.x;
-				image.height = item.y;
-				image. = item.styleName;
-				var ellipseMove:EllipseMove = new EllipseMove(	
+				var item:Item = itemManager.allocateItem(Math.round(Math.random() * 10));
+				initForFrontBelt(item.moveEffect);
+				item.moveEffect.start();
+			}
+			
+			public function initForFrontBelt(ellipseMove:EllipseMove):EllipseMove {
+				if (ellipseMove != null) {
+					var center:Point = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2);
+					var a:int = gamePlayArea.width / 2 + 100;
+					var b:int = 200;
+					ellipseMove.init(
+						ellipseMove.move.target, 
+						center, 
+						a, b, 
+						-a, a);
+					return ellipseMove;
+				} else {
+					return null;
+				}
+			}
+			
+			public static function initForBackBelt(ellipseMove:EllipseMove):EllipseMove {
+				return null;//TODO
+			}
+			
+			public static function initForDummyBelt(ellipseMove:EllipseMove):EllipseMove {
+				return null;//TODO
 			}
 		]]>
 	</mx:Script>
 	
-	<mx:Canvas x="18" y="9" width="708" height="383" styleName="gamePlayArea"
+	<mx:Canvas id="gamePlayArea" x="18" y="9" width="708" height="383" styleName="gamePlayArea"
 			   horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
 	
 	<mx:Button x="10" y="10" label="Button" click="startRoullete()"/>
