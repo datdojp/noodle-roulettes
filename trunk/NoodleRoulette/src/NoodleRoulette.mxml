@@ -11,7 +11,7 @@
 			
 			var frontBeltEllipse:Ellipse = new Ellipse();
 			var backBeltEllipse:Ellipse = new Ellipse();
-			var dummyBeltElllipse:Ellipse = new Ellipse();
+			var dummyBeltEllipse:Ellipse = new Ellipse();
 			
 			var itemsInFrontBelt:ArrayCollection = new ArrayCollection();
 			var itemsInBackBelt:ArrayCollection = new ArrayCollection();
@@ -29,16 +29,22 @@
 				this.backBeltEllipse.a = gamePlayArea.width / 2 + 100;
 				this.backBeltEllipse.b = 40;
 				
+				this.dummyBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2 + 50);
+				this.dummyBeltEllipse.a = this.backBeltEllipse.a;
+				this.dummyBeltEllipse.b = this.backBeltEllipse.b;
+				
 				startRoullete();
 			}
 			
 			function startRoullete():void {
-				var timer:Timer = new Timer(10, 0);
-				timer.addEventListener(TimerEvent.TIMER, onTimer);
-				timer.start();
+				var mainTimer:Timer = new Timer(10, 0);
+				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
+				mainTimer.start();
 			}
 			
+			var lastDummyItem;
 			function onTimer(event:TimerEvent) {
+				//handle back belt
 				if (itemsInFrontBelt.length > 0) {
 					var firstItem:Item = itemsInFrontBelt.getItemAt(0) as Item;
 					if (!firstItem.isUsed()) {
@@ -49,7 +55,7 @@
 					}
 				}
 				
-				
+				//handle front belt
 				var needNewItem:Boolean = false;
 				if (itemsInFrontBelt.length == 0) {
 					needNewItem = true;
@@ -61,28 +67,46 @@
 				}
 
 				if (needNewItem) {
-					var item:Item = itemManager.allocateItem(Math.floor(Math.random() * 10));
+					var item:Item = itemManager.allocateItem(getRandomIdx());
 					gamePlayArea.addChild(item.image);
 					itemsInFrontBelt.addItem(item);
 					initForFrontBelt(item.moveEffect);
 					item.moveEffect.start();
 				}
+				
+				//handle dummy belt
+				needNewItem = false;
+				if (lastDummyItem == null || Math.abs(lastDummyItem.moveEffect.x - lastDummyItem.moveEffect.fromX) > 100) {
+					var dummyItem:Item = itemManager.allocateItem(getRandomIdx());
+					gamePlayArea.addChild(dummyItem.image);
+					lastDummyItem = dummyItem;
+					initForDummyBelt(dummyItem.moveEffect);
+					dummyItem.moveEffect.start();
+				}
+			}
+			
+			public function getRandomIdx():int {
+				return Math.floor(Math.random() * 10);
 			}
 			
 			public function initForFrontBelt(ellipseMove:EllipseMove):EllipseMove {
-				ellipseMove.init(ellipseMove.move.target, frontBeltEllipse.center, 
+				return ellipseMove.init(ellipseMove.move.target, frontBeltEllipse.center, 
 					frontBeltEllipse.a, frontBeltEllipse.b, 
 					-frontBeltEllipse.a, frontBeltEllipse.a);
-				ellipseMove.isTargetFromFarDistance = false;
-				return ellipseMove;
 			}
 			
 			public function initForBackBelt(ellipseMove:EllipseMove):EllipseMove {
-				ellipseMove.init(ellipseMove.move.target, backBeltEllipse.center, 
+				return ellipseMove.init(ellipseMove.move.target, backBeltEllipse.center, 
 					backBeltEllipse.a, backBeltEllipse.b, 
-					backBeltEllipse.a, -backBeltEllipse.a);
-				ellipseMove.isTargetFromFarDistance = true;
-				return ellipseMove;
+					backBeltEllipse.a, -backBeltEllipse.a,
+					true);
+			}
+			
+			public function initForDummyBelt(ellipseMove:EllipseMove):EllipseMove {
+				return ellipseMove.init(ellipseMove.move.target, dummyBeltEllipse.center, 
+					dummyBeltEllipse.a, dummyBeltEllipse.b, 
+					-dummyBeltEllipse.a, dummyBeltEllipse.a,
+					true, true);
 			}
 			
 			public function outDebug(content:String) {
@@ -97,6 +121,6 @@
 	
 	<mx:Label id="debug" x="760" y="39" text="Label"/>
 	
-	
+	<mx:Image source="@Embed(source='assets/girls.png')" x="250" y="110"/>
 	
 </mx:Application>

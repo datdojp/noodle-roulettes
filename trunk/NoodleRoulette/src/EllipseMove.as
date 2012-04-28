@@ -17,6 +17,7 @@ package
 		public var dX:int;
 		public var dInterval:int;	
 		public var isTargetFromFarDistance:Boolean;
+		public var isClockwise:Boolean;
 		
 		public var x:int;
 		public var isRunning:Boolean = false;
@@ -34,7 +35,8 @@ package
 								  
 		
 		public function init(target:Object, center:Point, a:int, b:int, fromX:int, toX:int, 
-									dX:int = 5, dInterval:int = 50, isTargetFromFarDistance:Boolean = false):EllipseMove
+							 isTargetFromFarDistance:Boolean = false, isClockwise:Boolean = false,
+							 dX:int = 5, dInterval:int = 50):EllipseMove
 		{
 			setTarget(target);
 			this.move.duration = dInterval;
@@ -52,6 +54,7 @@ package
 			}
 			this.dInterval = dInterval;
 			this.isTargetFromFarDistance = isTargetFromFarDistance;
+			this.isClockwise = isClockwise;
 			
 			return this;
 		}
@@ -118,7 +121,7 @@ package
 			} else {
 				y = Math.sqrt((1 - x * x / a2) * b2);
 			}
-			if (this.dX > 0) {
+			if ( (!this.isClockwise && this.dX > 0) || (this.isClockwise && this.dX < 0) ) {
 				return -y;
 			} else {
 				return y;
