@@ -1,55 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="965" height="400"
-				styleName="background">
+				styleName="background" applicationComplete="init()">
 	<mx:Style source="assets/style.css"/>
 	<mx:Script>
 		<![CDATA[
+			import mx.collections.ArrayCollection;
 			import mx.controls.Image;
 			
 			var itemManager:ItemManager = new ItemManager();
 			
+			var frontBeltEllipse:Ellipse = new Ellipse();
+			var backBeltEllipse:Ellipse = new Ellipse();
+			var dummyBeltElllipse:Ellipse = new Ellipse();
+			
+			var itemsInFrontBelt:ArrayCollection = new ArrayCollection();
+			var itemsInBackBelt:ArrayCollection = new ArrayCollection();
+			
+			public static var instance:NoodleRoulette;
+			
+			function init() {
+				instance = this;
+				
+				this.frontBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2);
+				this.frontBeltEllipse.a = gamePlayArea.width / 2 + 200;
+				this.frontBeltEllipse.b = 140;
+				
+				this.backBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2);
+				this.backBeltEllipse.a = gamePlayArea.width / 2 + 100;
+				this.backBeltEllipse.b = 40;
+				
+				startRoullete();
+			}
+			
 			function startRoullete():void {
-				var timer:Timer = new Timer(1000, 0);
+				var timer:Timer = new Timer(10, 0);
 				timer.addEventListener(TimerEvent.TIMER, onTimer);
 				timer.start();
 			}
 			
 			function onTimer(event:TimerEvent) {
-				var item:Item = itemManager.allocateItem(Math.floor((Math.random() * 10));
-				gamePlayArea.addChild(item.image);
-				initForFrontBelt(item.moveEffect);
-				item.moveEffect.start();
-			}
-			
-			public function initForFrontBelt(ellipseMove:EllipseMove):EllipseMove {
-				if (ellipseMove != null) {
-					var center:Point = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2);
-					var a:int = gamePlayArea.width / 2 + 100;
-					var b:int = 150;
-					ellipseMove.init(
-						ellipseMove.move.target, 
-						center, 
-						a, b, 
-						-a, a);
-					return ellipseMove;
+				if (itemsInFrontBelt.length > 0) {
+					var firstItem:Item = itemsInFrontBelt.getItemAt(0) as Item;
+					if (!firstItem.isUsed()) {
+						itemsInFrontBelt.removeItemAt(0);
+						itemsInBackBelt.addItem(firstItem);
+						initForBackBelt(firstItem.moveEffect);
+						firstItem.moveEffect.start();
+					}
+				}
+				
+				
+				var needNewItem:Boolean = false;
+				if (itemsInFrontBelt.length == 0) {
+					needNewItem = true;
 				} else {
-					return null;
+					var lastItem:Item = itemsInFrontBelt.getItemAt(itemsInFrontBelt.length - 1) as Item;
+					if (Math.abs(lastItem.moveEffect.x - lastItem.moveEffect.fromX) > 100) {
+						needNewItem = true;
+					}
+				}
+
+				if (needNewItem) {
+					var item:Item = itemManager.allocateItem(Math.floor(Math.random() * 10));
+					gamePlayArea.addChild(item.image);
+					itemsInFrontBelt.addItem(item);
+					initForFrontBelt(item.moveEffect);
+					item.moveEffect.start();
 				}
 			}
 			
-			public static function initForBackBelt(ellipseMove:EllipseMove):EllipseMove {
-				return null;//TODO
+			public function initForFrontBelt(ellipseMove:EllipseMove):EllipseMove {
+				ellipseMove.init(ellipseMove.move.target, frontBeltEllipse.center, 
+					frontBeltEllipse.a, frontBeltEllipse.b, 
+					-frontBeltEllipse.a, frontBeltEllipse.a);
+				ellipseMove.isTargetFromFarDistance = false;
+				return ellipseMove;
 			}
 			
-			public static function initForDummyBelt(ellipseMove:EllipseMove):EllipseMove {
-				return null;//TODO
+			public function initForBackBelt(ellipseMove:EllipseMove):EllipseMove {
+				ellipseMove.init(ellipseMove.move.target, backBeltEllipse.center, 
+					backBeltEllipse.a, backBeltEllipse.b, 
+					backBeltEllipse.a, -backBeltEllipse.a);
+				ellipseMove.isTargetFromFarDistance = true;
+				return ellipseMove;
+			}
+			
+			public function outDebug(content:String) {
+				this.debug.text = content;
 			}
 		]]>
 	</mx:Script>
 	
-	<mx:Canvas id="gamePlayArea" x="18" y="9" width="708" height="383" styleName="gamePlayArea"
-			   horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
+	<mx:Canvas id="gamePlayArea" x="18" y="9" width="704" height="383" 
+			   horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	</mx:Canvas>
 	
-	<mx:Button x="10" y="10" label="Button" click="startRoullete()"/>
+	<mx:Label id="debug" x="760" y="39" text="Label"/>
+	
+	
 	
 </mx:Application>

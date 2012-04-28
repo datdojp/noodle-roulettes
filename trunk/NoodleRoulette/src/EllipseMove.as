@@ -9,21 +9,23 @@ package
 	public class EllipseMove
 	{
 		public var move:Move;
-		public var center:Point;
-		public var a:int;
-		public var b:int;
+		public var ellipse:Ellipse;
 		public var a2:int;
 		public var b2:int;
 		public var fromX;
 		public var toX;
 		public var dX:int;
 		public var dInterval:int;	
+		public var isTargetFromFarDistance:Boolean;
 		
 		public var x:int;
 		public var isRunning:Boolean = false;
+		public var targetOriginalWidth:Number;
+		public var targetOriginalHeight:Number;
 		
 		public function EllipseMove() {
 			this.move = new Move();
+			this.ellipse = new Ellipse();
 		}
 		
 		public function setTarget(target:Object):void {
@@ -32,14 +34,14 @@ package
 								  
 		
 		public function init(target:Object, center:Point, a:int, b:int, fromX:int, toX:int, 
-									dX:int = 5, dInterval:int = 50):EllipseMove
+									dX:int = 5, dInterval:int = 50, isTargetFromFarDistance:Boolean = false):EllipseMove
 		{
-			this.move.target = target;
+			setTarget(target);
 			this.move.duration = dInterval;
-			this.center = center;
-			this.a = a;
+			this.ellipse.center = center;
+			this.ellipse.a = a;
 			this.a2 = a * a;
-			this.b = b;
+			this.ellipse.b = b;
 			this.b2 = b * b;
 			this.fromX = fromX;
 			this.toX = toX;
@@ -49,6 +51,7 @@ package
 				this.dX = -dX;
 			}
 			this.dInterval = dInterval;
+			this.isTargetFromFarDistance = isTargetFromFarDistance;
 			
 			return this;
 		}
@@ -57,9 +60,16 @@ package
 		{
 			this.x = this.fromX;
 			var y = getY(this.x);
-			this.move.target.visible = true;
+			if (this.isTargetFromFarDistance) {
+				this.move.target.width = this.targetOriginalWidth * 0.6;
+				this.move.target.height = this.targetOriginalHeight * 0.6;
+			} else {
+				this.move.target.width = this.targetOriginalWidth;
+				this.move.target.height = this.targetOriginalHeight;
+			}
 			this.move.target.x = getRealX(this.x);
 			this.move.target.y = getRealY(y);
+			this.move.target.visible = true;
 			this.move.xFrom = getRealX(this.x);
 			this.move.yFrom = getRealY(y);
 			this.move.xTo = getRealX(this.x);
@@ -73,10 +83,13 @@ package
 		public function onRepeat(event:Event) {
 			if ( (this.dX > 0 && this.x > this.toX) ||
 				(this.dX < 0 && this.x < this.toX) ||
-				(this.x > this.a || this.x < -this.a) ) {
+				(this.x > this.ellipse.a || this.x < -this.ellipse.a) ) {
 				
 				this.move.target.visible = false;
 				this.isRunning = false;
+				if (this.onFinish != null) {
+					this.onFinish(this);
+				}
 				return;
 			}
 			this.x += this.dX;
@@ -88,18 +101,20 @@ package
 			this.move.play();
 		}
 		
+		public var onFinish:Function;
+		
 		public function getRealX(x:int) {
-			return this.center.x + x;
+			return this.ellipse.center.x + x - this.move.target.width / 2;
 		}
 		
 		public function getRealY(y:int) {
-			return this.center.y - y;
+			return this.ellipse.center.y - y - this.move.target.height / 2;
 		}
 		
 		public function getY(x:int) {
 			var y;
 			if (x == 0) {
-				y = b;
+				y = this.ellipse.b;
 			} else {
 				y = Math.sqrt((1 - x * x / a2) * b2);
 			}
