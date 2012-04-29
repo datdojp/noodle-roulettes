@@ -73,6 +73,7 @@ package
 			this.move.target.x = getRealX(this.x);
 			this.move.target.y = getRealY(y);
 			this.move.target.visible = true;
+			this.move.target.alpha = 1;
 			this.move.xFrom = getRealX(this.x);
 			this.move.yFrom = getRealY(y);
 			this.move.xTo = getRealX(this.x);
@@ -102,6 +103,21 @@ package
 			this.move.yTo = getRealY(getY(this.x));
 			this.move.duration = this.dInterval;
 			this.move.play();
+		}
+		
+		public function stop() {
+			this.move.stop();
+			this.move.removeEventListener(EffectEvent.EFFECT_END, onRepeat);
+			this.isRunning = false;
+		}
+		
+		public function freeze() {
+			stop();
+			this.isRunning = true;
+		}
+		
+		public function unfreeze() {
+			this.isRunning = false;
 		}
 		
 		public var onFinish:Function;

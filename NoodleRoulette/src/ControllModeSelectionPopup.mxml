@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="352" height="44">
+	<mx:Script>
+		<![CDATA[
+			import mx.core.Application;
+		]]>
+	</mx:Script>
+	<mx:Button x="10" y="10" label="Bàn phím" click="{Application.application.initKeyboardMode();}"/>
+	<mx:Button x="133" y="10" label="Chuột" click="{Application.application.initMouseMode();}"/>
+	<mx:Button x="251" y="10" label="Webcam" click="{Application.application.initWebcamMode();}"/>
+</mx:Canvas>

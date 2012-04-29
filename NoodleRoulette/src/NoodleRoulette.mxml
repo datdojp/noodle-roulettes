@@ -5,16 +5,21 @@
 	<mx:Script>
 		<![CDATA[
 			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
 			import mx.controls.Image;
+			import mx.core.UIComponent;
+			import mx.effects.Fade;
+			import mx.effects.Move;
+			import mx.events.EffectEvent;
 			
 			var itemManager:ItemManager = new ItemManager();
-			
 			var frontBeltEllipse:Ellipse = new Ellipse();
 			var backBeltEllipse:Ellipse = new Ellipse();
 			var dummyBeltEllipse:Ellipse = new Ellipse();
-			
 			var itemsInFrontBelt:ArrayCollection = new ArrayCollection();
 			var itemsInBackBelt:ArrayCollection = new ArrayCollection();
+			var moveEffectOfFork:Move = new Move();
+			var totalScore:int = 0;
 			
 			public static var instance:NoodleRoulette;
 			
@@ -33,10 +38,14 @@
 				this.dummyBeltEllipse.a = this.backBeltEllipse.a;
 				this.dummyBeltEllipse.b = this.backBeltEllipse.b;
 				
+				this.moveEffectOfFork.target = fork;
+				
 				startRoullete();
+				
+				Alert.show("START GAME");
 			}
 			
-			function startRoullete():void {
+			public function startRoullete():void {
 				var mainTimer:Timer = new Timer(10, 0);
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
@@ -61,7 +70,7 @@
 					needNewItem = true;
 				} else {
 					var lastItem:Item = itemsInFrontBelt.getItemAt(itemsInFrontBelt.length - 1) as Item;
-					if (Math.abs(lastItem.moveEffect.x - lastItem.moveEffect.fromX) > 100) {
+					if (Math.abs(lastItem.moveEffect.x - lastItem.moveEffect.fromX) > 200) {
 						needNewItem = true;
 					}
 				}
@@ -112,6 +121,160 @@
 			public function outDebug(content:String) {
 				this.debug.text = content;
 			}
+			
+			public function moveForkHorizontally(xBy:int):void {
+				this.moveEffectOfFork.stop();
+				this.moveEffectOfFork.xBy = xBy;
+				this.moveEffectOfFork.yBy = 0;
+				this.moveEffectOfFork.duration = 100;
+				this.moveEffectOfFork.play();
+			}
+			
+			public function forkDown():void {
+				this.disableCurrentMode();
+				this.moveEffectOfFork.stop();
+				var forkDownEffect:Move = new Move();
+				forkDownEffect.target = fork;
+				forkDownEffect.xBy = 0;
+				forkDownEffect.yBy = 200;
+				forkDownEffect.duration = 300;
+				forkDownEffect.addEventListener(EffectEvent.EFFECT_END,
+					function(event:EffectEvent) {
+						var moveEffectOfForkAndItem:Move = new Move();
+						moveEffectOfForkAndItem.duration = 500;
+						var caughtItem:Item;
+						for (var i:int = 0; i < itemsInFrontBelt.length; i++) {
+							var item:Item = itemsInFrontBelt.getItemAt(i) as Item;
+							if (isOverlap(item.image, fork)) {
+								itemsInFrontBelt.removeItemAt( itemsInFrontBelt.getItemIndex(item) );
+								item.moveEffect.freeze();
+								if (gamePlayArea.getChildIndex(item.image) >= 0) {
+									gamePlayArea.removeChild(item.image);
+								}
+								addChild(item.image);
+								
+								moveEffectOfForkAndItem.targets = new Array(fork, item.image);
+								caughtItem = item;
+								break;
+							}
+						}
+						if (caughtItem != null) {
+							moveEffectOfForkAndItem.xBy = ((bowl.x + bowl.width/2) - fork.width/2) - fork.x;
+							moveEffectOfForkAndItem.yBy = -fork.y;
+							var isMEOFAIEnded:Boolean = false;
+							moveEffectOfForkAndItem.addEventListener(EffectEvent.EFFECT_END,
+								function(event:Event) {
+									if (isMEOFAIEnded) {
+										return;
+									}
+									isMEOFAIEnded = true;
+									initCurrentMode();
+									var dropItemEffect:Move = new Move();
+									dropItemEffect.target = caughtItem.image;
+									dropItemEffect.duration = 500;
+									dropItemEffect.yBy = 100;
+									dropItemEffect.addEventListener(EffectEvent.EFFECT_END,
+										function(event:Event) {
+											var disappear:Fade = new Fade();
+											disappear.target = caughtItem.image;
+											disappear.alphaFrom = 1;
+											disappear.alphaTo = 0;
+											disappear.duration = 300;
+											disappear.addEventListener(EffectEvent.EFFECT_END, 
+												function(event:Event) {
+													caughtItem.moveEffect.unfreeze();
+													totalScore += caughtItem.score;
+													score.text = totalScore.toString();
+													caughtItem = null;
+												}
+											);
+											
+											disappear.play();
+										}
+									);
+									dropItemEffect.play();
+								}
+							);
+						} else {
+							moveEffectOfForkAndItem.target = fork;
+							moveEffectOfForkAndItem.yBy = -fork.y;
+							moveEffectOfForkAndItem.addEventListener(EffectEvent.EFFECT_END,
+								function(event:Event) {
+									initCurrentMode();	
+									caughtItem = null;
+								}
+							);
+						}
+						moveEffectOfForkAndItem.play();
+					}
+				);
+				forkDownEffect.play();
+			}
+			
+			public function isOverlap(obj1:UIComponent, obj2:UIComponent):Boolean {
+				var rect1:Rectangle = new Rectangle(obj1.x, obj1.y, obj1.width, obj1.height);
+				var rect2:Rectangle = new Rectangle(obj2.x, obj2.y, obj2.width, obj2.height);
+				return rect1.intersects(rect2);
+			}
+			
+			const CONTROL_MODE_KEYBOARD = 1;
+			const CONTROL_MODE_MOUSE = 2;
+			const CONTROL_MODE_WEBCAM = 3;
+			var controlMode:int;
+			
+			public function initKeyboardMode() {
+				controlMode = CONTROL_MODE_KEYBOARD;
+				
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+			}
+			public function disableKeyboardMode() {
+				stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
+			}
+			
+			public function initMouseMode() {
+				controlMode = CONTROL_MODE_MOUSE;
+				//TODO
+			}
+			public function disableMouseMode() {
+				//TODO
+			}
+			
+			public function initWebcamMode() {
+				controlMode = CONTROL_MODE_WEBCAM;
+				//TODO
+			}
+			public function disableWebcamMode() {
+				//TODO
+			}
+			
+			public function initCurrentMode() {
+				if (controlMode == CONTROL_MODE_KEYBOARD) {
+					initKeyboardMode();
+				} else if (controlMode == CONTROL_MODE_MOUSE) {
+					initMouseMode();
+				} else if (controlMode == CONTROL_MODE_WEBCAM) {
+					initWebcamMode();
+				}
+			}
+			public function disableCurrentMode() {
+				if (controlMode == CONTROL_MODE_KEYBOARD) {
+					disableKeyboardMode();
+				} else if (controlMode == CONTROL_MODE_MOUSE) {
+					disableMouseMode();
+				} else if (controlMode == CONTROL_MODE_WEBCAM) {
+					disableWebcamMode();
+				}
+			}
+			
+			public function handleKeyDown(event:KeyboardEvent):void {
+				if (event.keyCode == 39) { //RIGHT
+					moveForkHorizontally(20);
+				} else if (event.keyCode == 37) {//LEFT	
+					moveForkHorizontally(-20);
+				} else if (event.keyCode == 40) {//DOWN
+					forkDown();
+				}
+			}
 		]]>
 	</mx:Script>
 	
@@ -121,6 +284,9 @@
 	
 	<mx:Label id="debug" x="760" y="39" text="Label"/>
 	
-	<mx:Image source="@Embed(source='assets/girls.png')" x="250" y="110"/>
+	<mx:Image id="bowl" source="@Embed(source='assets/girls.png')" x="250" y="110"/>
 	
+	<mx:Label id="score" x="310" y="245" width="100" styleName="score" text="0" textAlign="center"/>
+	
+	<mx:Image id="fork" source="@Embed(source='assets/fork.png')"/>	
 </mx:Application>
