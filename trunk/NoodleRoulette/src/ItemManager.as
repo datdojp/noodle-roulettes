@@ -51,19 +51,19 @@ package
 		
 		private var TEMPLATE_ITEMS:Array = new Array(
 			(new Item()).init(10, 50, 50,item01ImgCls),
-			(new Item()).init(10, 50, 50,item02ImgCls),
-			(new Item()).init(10, 50, 50,item03ImgCls),
-			(new Item()).init(10, 50, 50,item04ImgCls),
-			(new Item()).init(10, 50, 50,item05ImgCls),
+			(new Item()).init(20, 50, 50,item02ImgCls),
+			(new Item()).init(30, 50, 50,item03ImgCls),
+			(new Item()).init(40, 50, 50,item04ImgCls),
+			(new Item()).init(50, 50, 50,item05ImgCls),
 			(new Item()).init(0, 50, 50,item06ImgCls, true),
-			(new Item()).init(10, 50, 50,item07ImgCls),
-			(new Item()).init(10, 50, 50,item08ImgCls),
-			(new Item()).init(10, 50, 50,item09ImgCls),
-			(new Item()).init(10, 50, 50,item10ImgCls),
-			(new Item()).init(10, 50, 50,item11ImgCls)
+			(new Item()).init(60, 50, 50,item07ImgCls),
+			(new Item()).init(70, 50, 50,item08ImgCls),
+			(new Item()).init(80, 50, 50,item09ImgCls),
+			(new Item()).init(90, 50, 50,item10ImgCls),
+			(new Item()).init(100, 50, 50,item11ImgCls)
 		);
 		
-		private var items:ArrayCollection;
+		public var items:ArrayCollection;
 		
 		public function ItemManager() {
 			items = new ArrayCollection();
