@@ -11,6 +11,7 @@
 			import mx.effects.Fade;
 			import mx.effects.Move;
 			import mx.events.EffectEvent;
+			import mx.managers.PopUpManager;
 			
 			var itemManager:ItemManager = new ItemManager();
 			var frontBeltEllipse:Ellipse = new Ellipse();
@@ -40,9 +41,14 @@
 				
 				this.moveEffectOfFork.target = fork;
 				
-				startRoullete();
-				
-				Alert.show("START GAME");
+				var controlModeSelectionPopup:ControllModeSelectionPopup = new ControllModeSelectionPopup;
+				centerUIComponent(this, controlModeSelectionPopup);
+				PopUpManager.addPopUp(controlModeSelectionPopup, this, false);
+			}
+			
+			public static function centerUIComponent(parentUI:UIComponent, child:UIComponent) {
+				child.x = parentUI.width/2 - child.width/2;
+				child.y = parentUI.height/2 - child.height/2;
 			}
 			
 			public function startRoullete():void {
@@ -217,14 +223,13 @@
 				return rect1.intersects(rect2);
 			}
 			
-			const CONTROL_MODE_KEYBOARD = 1;
-			const CONTROL_MODE_MOUSE = 2;
-			const CONTROL_MODE_WEBCAM = 3;
+			public const CONTROL_MODE_KEYBOARD = 1;
+			public const CONTROL_MODE_MOUSE = 2;
+			public const CONTROL_MODE_WEBCAM = 3;
 			var controlMode:int;
 			
 			public function initKeyboardMode() {
 				controlMode = CONTROL_MODE_KEYBOARD;
-				
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
 			}
 			public function disableKeyboardMode() {
@@ -233,10 +238,13 @@
 			
 			public function initMouseMode() {
 				controlMode = CONTROL_MODE_MOUSE;
-				//TODO
+				stage.addEventListener(MouseEvent.CLICK, handleMouseClick);
+				stage.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
+					
 			}
 			public function disableMouseMode() {
-				//TODO
+				stage.removeEventListener(MouseEvent.CLICK, handleMouseClick);
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
 			}
 			
 			public function initWebcamMode() {
@@ -273,6 +281,15 @@
 					moveForkHorizontally(-20);
 				} else if (event.keyCode == 40) {//DOWN
 					forkDown();
+				}
+			}
+			
+			function handleMouseClick(event:MouseEvent):void {
+				forkDown();
+			}
+			function handleMouseMove(event:MouseEvent):void {
+				if ( gamePlayArea.getRect(this).contains(event.stageX, event.stageY) ) {
+					fork.x = event.stageX;
 				}
 			}
 		]]>
