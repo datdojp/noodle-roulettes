@@ -13,6 +13,8 @@
 			import mx.events.EffectEvent;
 			import mx.managers.PopUpManager;
 			
+			import uk.co.soulwire.cv.MotionTracker;
+			
 			var itemManager:ItemManager = new ItemManager();
 			var frontBeltEllipse:Ellipse = new Ellipse();
 			var backBeltEllipse:Ellipse = new Ellipse();
@@ -21,6 +23,10 @@
 			var itemsInBackBelt:ArrayCollection = new ArrayCollection();
 			var moveEffectOfFork:Move = new Move();
 			var totalScore:int = 0;
+			var remainingTime:int;
+			var mainTimer:Timer;
+			
+			const MAIN_TIMER_INTERVAL:int = 10;
 			
 			public static var instance:NoodleRoulette;
 			
@@ -52,13 +58,32 @@
 			}
 			
 			public function startRoullete():void {
-				var mainTimer:Timer = new Timer(10, 0);
+				remainingTime = 10 * 1000;
+				mainTimer = new Timer(MAIN_TIMER_INTERVAL, 0);
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
 			}
 			
+			public function stopGame() {
+				mainTimer.stop();
+				disableCurrentMode();
+				itemManager.stopAll();
+			}
+			
 			var lastDummyItem;
 			function onTimer(event:TimerEvent) {
+				//handle remaining time
+				remainingTime -= MAIN_TIMER_INTERVAL;
+				if (remainingTime <= 0) {
+					stopGame();
+					Alert.show("Game over");
+					return;
+				}
+				var min:int = remainingTime / (60 * 1000);
+				var sec:int = (remainingTime - min * 60 * 1000) / 1000;
+				time.text = (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+				
+				
 				//handle back belt
 				if (itemsInFrontBelt.length > 0) {
 					var firstItem:Item = itemsInFrontBelt.getItemAt(0) as Item;
@@ -247,12 +272,60 @@
 				stage.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
 			}
 			
+			var motionTracker:MotionTracker;
+			var motionTrackerTimer:Timer;
+			var lastMotionTrackerY:Number;
 			public function initWebcamMode() {
 				controlMode = CONTROL_MODE_WEBCAM;
-				//TODO
+				if (motionTracker == null && motionTrackerTimer == null) {
+					var camW : int = gamePlayArea.width;
+					var camH : int = gamePlayArea.height;
+					
+					// Create the camera
+					var cam : Camera = Camera.getCamera();
+					cam.setMode(camW, camH, stage.frameRate);
+					
+					// Create a video
+					var vid : Video = new Video(camW, camH);
+					vid.attachCamera(cam);
+					
+					// Create the Motion Tracker
+					motionTracker = new MotionTracker(vid);
+					
+					motionTrackerTimer = new Timer(100, 0);
+					motionTrackerTimer.addEventListener(TimerEvent.TIMER,
+						function(event:Event) {
+							// Tell the MotionTracker to update itself
+							motionTracker.track();
+							
+							// If there is enough movement (see the MotionTracker's minArea property) then continue
+							if ( !motionTracker.hasMovement ) return;
+							
+							var motionX:Number = motionTracker.motionArea.x + motionTracker.motionArea.width / 2;
+							var motionY:Number = motionTracker.motionArea.y + motionTracker.motionArea.height / 2;
+							
+							// Move the target with some easing
+							moveEffectOfFork.stop();
+							moveEffectOfFork.xTo = gamePlayArea.x + gamePlayArea.width - motionX;
+							moveEffectOfFork.yTo = 0;
+							moveEffectOfFork.play();
+//							if (Math.abs(gamePlayArea.y + gamePlayArea.height - motionY) < 100) {
+//								forkDown();
+//							}
+							if (motionY > 300) {
+								forkDown();
+							}
+							
+							debug.text = "x:" + motionX + ", y:" + motionY;
+						}
+					);
+					motionTrackerTimer.start();
+				} else {
+					motionTrackerTimer.start();
+				}
 			}
 			public function disableWebcamMode() {
-				//TODO
+				motionTrackerTimer.stop();
 			}
 			
 			public function initCurrentMode() {
@@ -299,11 +372,14 @@
 			   horizontalScrollPolicy="off" verticalScrollPolicy="off">
 	</mx:Canvas>
 	
-	<mx:Label id="debug" x="760" y="39" text="Label"/>
+	<mx:Label id="debug" x="741" y="145" text="Label"/>
 	
 	<mx:Image id="bowl" source="@Embed(source='assets/girls.png')" x="250" y="110"/>
 	
 	<mx:Label id="score" x="310" y="245" width="100" styleName="score" text="0" textAlign="center"/>
 	
 	<mx:Image id="fork" source="@Embed(source='assets/fork.png')"/>	
+	<mx:Canvas id="clock" x="596" y="10" backgroundImage="@Embed(source='assets/clock.png')" width="98" height="46">
+		<mx:Label id="time" text="00:00" styleName="time"/>
+	</mx:Canvas>
 </mx:Application>

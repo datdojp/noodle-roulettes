@@ -89,9 +89,19 @@ package
 			itemsOfIdx.addItem(newItem);
 			itemCount++;
 			if (NoodleRoulette.instance != null) {
-				NoodleRoulette.instance.outDebug(itemCount.toString());
+//				NoodleRoulette.instance.outDebug(itemCount.toString());
 			}
 			return newItem;
+		}
+		
+		public function stopAll() {
+			for (var i:int = 0; i < items.length; i++) {
+				var anArray:ArrayCollection = items.getItemAt(i) as ArrayCollection;
+				for (var j:int = 0; j < anArray.length; j++) {
+					var anItem:Item = anArray.getItemAt(j) as Item;
+					anItem.moveEffect.stop();
+				}
+			}
 		}
 	}
 }
