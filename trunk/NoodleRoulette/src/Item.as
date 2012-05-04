@@ -33,9 +33,11 @@ package
 		}
 		
 		public function clone():Item {
-			return (new Item()).init(
+			var result:Item = (new Item()).init(
 				this.score, this.image.width, this.image.height, 
 				this.imgClass, this.isSpecial);
+			result.moveEffect.dInterval = this.moveEffect.dInterval;
+			return result;
 		}
 		
 		public function isUsed():Boolean {

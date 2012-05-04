@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300"
+		   backgroundColor="white" xmlns:local="*">
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.serialization.json.JSON;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.Application;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			public var citiesData:ArrayCollection = new ArrayCollection(
+				[ {label:"Ho Chi Minh", data:1}, 
+					{label:"Ha Noi", data:2}, 
+					{label:"Da Nang", data:3} ]);
+			
+			function finishSendResult(event:ResultEvent) {
+				var JSONResArr:String = String(httpSendResult.lastResult);	
+				var result:Object = JSON.decode(JSONResArr);
+				if (result.result == null) {
+					Alert.show(result.error);
+				}
+				
+				Application.application.updateHighscoreList();
+				PopUpManager.removePopUp(this);
+			}
+			
+			function finishGetUserInfo(event:ResultEvent) {
+				var JSONResArr:String = String(httpGetUserInfo.lastResult);
+				if (JSONResArr != null && JSONResArr.length > 0) {
+					var result:Object = JSON.decode(JSONResArr);
+					if (result.error != null) return;
+					idCarNo.text = result[0].cmnd;
+					phone.text = result[0].phone;
+					address.text = result[0].address;
+					for (var i = 0; i < citiesData.length; i++) {
+						if (citiesData.getItemAt(i).label == result[0].city) {
+							cities.selectedIndex = i;
+							break;
+						}
+					}
+				}
+				
+			}
+			
+			function validate():Boolean {
+				return true;
+			}
+			
+			function onSendButtonClicked() {
+				if (!validate()) return;
+				
+				var params:Object = new Object();
+				params.a = "post";
+				params.fullname = txtName.text;
+				params.cmnd = idCarNo.text;
+				params.dob = dateFormatter.format(new Date());
+				params.phone = phone.text;
+				params.address = address.text;
+				params.city = citiesData.getItemAt(cities.selectedIndex).label;
+				params.score = encrypt(Application.application.totalScore);
+				httpSendResult.send(params);
+				
+				PopUpManager.removePopUp(this);
+			}
+			
+			function encrypt(score:int):Number {
+				return score * score * 47
+			}
+			
+			function autoComplete() {
+				if (txtName.text == null || txtName.text.length == 0) return;
+				
+				var params = new Object();
+				params.a = "get";
+				params.fullname = txtName.text;
+				httpGetUserInfo.send(params);
+			}
+		]]>
+	</mx:Script>
+	<mx:Label x="56" y="36" text="Họ tên"/>
+	<mx:TextInput id="txtName" x="120" y="34" focusOut="{autoComplete();}"/>
+	<mx:Label x="56" y="88" text="CMND"/>
+	<mx:TextInput id="idCarNo" x="120" y="86"/>
+	<mx:Label x="58" y="126" text="Điện thoại"/>
+	<mx:TextInput id="phone" x="120" y="124"/>
+	<mx:Label x="63" y="171" text="Địa chỉ"/>
+	<mx:TextInput id="address" x="120" y="169"/>
+	<mx:Label x="63" y="208" text="Thành phố"/>
+	<mx:ComboBox id="cities" x="127" y="206" dataProvider="{citiesData}">
+		
+	</mx:ComboBox>
+	<mx:Button x="79.65" y="268" label="Hoàn tất" click="{onSendButtonClicked()}"/>
+	<mx:Button x="222" y="268" label="Hủy" click="{PopUpManager.removePopUp(this);}"/>
+	
+	<local:NoCachingHttpService
+		id="httpSendResult"
+		url="http://mekongmedia.com.vn/reeva3mien/info.php"
+		method="POST"
+		resultFormat="object"
+		result="finishSendResult(event)"
+		/>
+	<local:NoCachingHttpService
+		id="httpGetUserInfo"
+		url="http://mekongmedia.com.vn/reeva3mien/info.php"
+		method="GET"
+		resultFormat="object"
+		result="finishGetUserInfo(event)"
+		/>
+	<mx:DateFormatter id="dateFormatter" formatString="YYYYMMDD"/>
+</mx:Canvas>
