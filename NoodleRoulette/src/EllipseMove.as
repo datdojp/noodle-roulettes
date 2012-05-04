@@ -24,6 +24,10 @@ package
 		public var targetOriginalWidth:Number;
 		public var targetOriginalHeight:Number;
 		
+		public static const DEFAULT_D_INTERVAL = 50;
+		
+		public static var GLOBAL_SPEED_RATE = 1;
+		
 		public function EllipseMove() {
 			this.move = new Move();
 			this.ellipse = new Ellipse();
@@ -36,7 +40,7 @@ package
 		
 		public function init(target:Object, center:Point, a:int, b:int, fromX:int, toX:int, 
 							 isTargetFromFarDistance:Boolean = false, isClockwise:Boolean = false,
-							 dX:int = 5, dInterval:int = 50):EllipseMove
+							 dX:int = 5, dInterval:int = DEFAULT_D_INTERVAL):EllipseMove
 		{
 			setTarget(target);
 			this.move.duration = dInterval;
@@ -101,7 +105,8 @@ package
 			this.move.yFrom = this.move.yTo;
 			this.move.xTo = getRealX(this.x);
 			this.move.yTo = getRealY(getY(this.x));
-			this.move.duration = this.dInterval;
+//			this.move.duration = this.dInterval;
+			this.move.duration = Math.round(DEFAULT_D_INTERVAL * GLOBAL_SPEED_RATE);
 			this.move.play();
 		}
 		
@@ -142,6 +147,27 @@ package
 			} else {
 				return y;
 			}
+		}
+		
+		public function setSpeedRate(rate:Number):void {
+			
+			this.dInterval = Math.round(rate * DEFAULT_D_INTERVAL);
+			
+//			this.move.stop();
+//			
+//			var dx = this.move.xTo - this.move.xFrom;
+//			var dy = this.move.yTo - this.move.yFrom;
+//			var d = Math.sqrt(dx * dx + dy * dy);
+//			
+//			var dx2 = this.move.target.x - this.move.xTo;
+//			var dy2 = this.move.target.y - this.move.yTo;
+//			var d2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+//			
+//			this.move.xFrom = this.move.target.x;
+//			this.move.yFrom = this.move.target.y;
+//			this.move.duration = Math.round(this.dInterval * d2 / d);
+//			
+//			this.move.play();
 		}
 		
 		//		private function calculatePosition(alpha:int):Point

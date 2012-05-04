@@ -74,7 +74,6 @@ package
 			}
 		}
 		
-		var itemCount = 0;
 		public function allocateItem(idx:int):Item {
 			var itemsOfIdx:ArrayCollection = items.getItemAt(idx) as ArrayCollection;
 			for (var i:int = 0; i < itemsOfIdx.length; i++) {
@@ -87,10 +86,6 @@ package
 			//no item available --> create new item
 			var newItem:Item = (TEMPLATE_ITEMS[idx] as Item).clone();
 			itemsOfIdx.addItem(newItem);
-			itemCount++;
-			if (NoodleRoulette.instance != null) {
-//				NoodleRoulette.instance.outDebug(itemCount.toString());
-			}
 			return newItem;
 		}
 		
@@ -102,6 +97,21 @@ package
 					anItem.moveEffect.stop();
 				}
 			}
+		}
+		
+		public function setSpeedRate(rate:Number) {
+//			for (var i:int = 0; i < items.length; i++) {
+//				var anArray:ArrayCollection = items.getItemAt(i) as ArrayCollection;
+//				for(var j:int = 0; j < anArray.length; j++) {
+//					var item:Item = anArray.getItemAt(j) as Item;
+//					item.moveEffect.setSpeedRate(rate);
+//				}
+//			}
+//			for (var i:int = 0; i < TEMPLATE_ITEMS.length; i++) {
+//				var item:Item = TEMPLATE_ITEMS[i] as Item;
+//				item.moveEffect.setSpeedRate(rate);
+//			}
+			EllipseMove.GLOBAL_SPEED_RATE = rate;
 		}
 	}
 }
