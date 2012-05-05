@@ -33,6 +33,15 @@
 			const SPEED_CHANGE_AFTER:int = 3000;
 			var mainTimerCounter:int = 0;
 			
+			const GAME_PLAY_AREA_X:int = 18;
+			const GAME_PLAY_AREA_Y:int = 9;
+			const GAME_PLAY_AREA_W:int = 704;
+			const GAME_PLAY_AREA_H:int = 383;
+			
+			const FORK_Y:int = -195;
+			const FORK_CATCHABLE_AREA_X = 18;
+			const FORK_CATCHABLE_AREA_W = 44 - 18;
+			
 			public static var instance:NoodleRoulette;
 			
 			function init() {
@@ -55,10 +64,15 @@
 //				var controlModeSelectionPopup:ControllModeSelectionPopup = new ControllModeSelectionPopup();
 //				centerUIComponent(this, controlModeSelectionPopup);
 //				PopUpManager.addPopUp(controlModeSelectionPopup, this, false);
+				
+				
 				var intro:IntroPopup = new IntroPopup();
 				PopUpManager.addPopUp(intro, this, false);
 				
-				updateHighscoreList();				
+				updateHighscoreList();
+				
+				var userInformationPopup:UserInformationPopup = new UserInformationPopup();
+				PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
 			}
 			
 			public function updateHighscoreList() {
@@ -71,8 +85,34 @@
 				child.y = parentUI.height/2 - child.height/2;
 			}
 			
+			public function startCountDown() {
+				txtCountDown.text = "3";
+				txtCountDown.visible = true;
+				zoomIn.play([txtCountDown]);
+				var countDownTimer:Timer = new Timer(1000, 4);
+				var countDown = 3;
+				countDownTimer.addEventListener(TimerEvent.TIMER,
+					function(event:Event) {
+						countDown--;
+						if (countDown > 0) {
+							txtCountDown.text = countDown;
+							zoomIn.play([txtCountDown]);
+						} else if (countDown == 0) {
+							txtCountDown.text = "GO";
+							zoomIn.play([txtCountDown]);
+						} else {
+							txtCountDown.visible = false;
+							countDownTimer.stop();
+							startRoullete();
+						}
+					}
+				);
+				countDownTimer.start();
+			}
+			
 			public function startRoullete():void {
-				remainingTime = 60 * 1000;
+				score.visible = true;
+				remainingTime = 2 * 1000;//TODO 1 min 30 sec
 				mainTimer = new Timer(MAIN_TIMER_INTERVAL, 0);
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
@@ -97,9 +137,16 @@
 				remainingTime -= MAIN_TIMER_INTERVAL;
 				if (remainingTime <= 0) {
 					stopGame();
-					var userInformationPopup:UserInformationPopup = new UserInformationPopup();
-					centerUIComponent(this, userInformationPopup);
-					PopUpManager.addPopUp(userInformationPopup, this, false);
+					finishBackground.visible = true;
+					var temp:Timer = new Timer(3000, 1);
+					temp.addEventListener(TimerEvent.TIMER,
+						function(event:Event) {
+							var userInformationPopup:UserInformationPopup = new UserInformationPopup();
+							userInformationPopup.addChild(hightscoreList);
+							PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
+						}
+					);
+					temp.start();
 					return;
 				}
 				var min:int = remainingTime / (60 * 1000);
@@ -184,6 +231,7 @@
 			}
 			
 			public function moveForkHorizontally(xBy:int):void {
+				if (fork.x + xBy < 0 || fork.x + FORK_CATCHABLE_AREA_X + FORK_CATCHABLE_AREA_W + xBy > forkContainer.width) return;
 				this.moveEffectOfFork.stop();
 				this.moveEffectOfFork.xBy = xBy;
 				this.moveEffectOfFork.yBy = 0;
@@ -197,7 +245,7 @@
 				var forkDownEffect:Move = new Move();
 				forkDownEffect.target = fork;
 				forkDownEffect.xBy = 0;
-				forkDownEffect.yBy = 220;
+				forkDownEffect.yBy = 200;
 				forkDownEffect.duration = 300;
 				forkDownEffect.addEventListener(EffectEvent.EFFECT_END,
 					function(event:EffectEvent) {
@@ -220,8 +268,8 @@
 							}
 						}
 						if (caughtItem != null) {
-							moveEffectOfForkAndItem.xBy = ((bowl.x + bowl.width/2) - fork.width/2) - fork.x + 50;
-							moveEffectOfForkAndItem.yBy = -fork.y;
+							moveEffectOfForkAndItem.xBy = ((bowl.x + bowl.width/2) - fork.width/2 - forkContainer.x) - fork.x + 110;
+							moveEffectOfForkAndItem.yBy = FORK_Y-fork.y;
 							var isMEOFAIEnded:Boolean = false;
 							moveEffectOfForkAndItem.addEventListener(EffectEvent.EFFECT_END,
 								function(event:Event) {
@@ -258,7 +306,7 @@
 							);
 						} else {
 							moveEffectOfForkAndItem.target = fork;
-							moveEffectOfForkAndItem.yBy = -fork.y;
+							moveEffectOfForkAndItem.yBy = FORK_Y - fork.y;
 							moveEffectOfForkAndItem.addEventListener(EffectEvent.EFFECT_END,
 								function(event:Event) {
 									initCurrentMode();	
@@ -273,7 +321,7 @@
 			}
 			
 			function isCaught(target:UIComponent):Boolean {
-				var forkRect:Rectangle = new Rectangle(fork.x - gamePlayArea.x + 5, fork.y - gamePlayArea.y, fork.width / 6, fork.height);
+				var forkRect:Rectangle = new Rectangle(fork.x + FORK_CATCHABLE_AREA_X, fork.y, FORK_CATCHABLE_AREA_W, fork.height);
 				var targetRect:Rectangle = new Rectangle(target.x + target.width / 6, target.y, target.width * 2 / 3, target.height);
 				
 				if (!forkRect.intersects(targetRect)) return false;
@@ -424,18 +472,24 @@
 		]]>
 	</mx:Script>
 	
-	<mx:Canvas id="gamePlayArea" x="18" y="9" width="704" height="383" 
+	<mx:Canvas id="gamePlayArea" x="{GAME_PLAY_AREA_X}" y="{GAME_PLAY_AREA_Y}" width="{GAME_PLAY_AREA_W}" height="{GAME_PLAY_AREA_H}" 
 			   horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	</mx:Canvas>
+	
+	<mx:Canvas id="clock" x="745" y="345" backgroundImage="@Embed(source='assets/clock.png')" width="98" height="46">
+		<mx:Label id="time" text="00:00" styleName="time" textAlign="center" y="7" width="100%" height="100%"/>
 	</mx:Canvas>
 	
 	<mx:Image id="bowl" source="@Embed(source='assets/girls.png')" x="250" y="110"/>
 	
-	<mx:Label id="score" x="310" y="245" width="100" styleName="score" text="0" textAlign="center"/>
+	<mx:Label id="score" x="320" y="260" width="100" styleName="score" text="0" textAlign="center" visible="false"/>
 	
-	<mx:Image id="fork" source="@Embed(source='assets/chopstick.png')" width="100" height="150"/>	
-	<mx:Canvas id="clock" x="596" y="10" backgroundImage="@Embed(source='assets/clock.png')" width="98" height="46">
-		<mx:Label id="time" text="00:00" styleName="time" />
+	<mx:Canvas id="forkContainer" x="{GAME_PLAY_AREA_X}" y="{GAME_PLAY_AREA_Y}" width="{GAME_PLAY_AREA_W}" height="{GAME_PLAY_AREA_H}"
+			   horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		<mx:Image id="fork" source="@Embed(source='assets/chopstick.png')" x="{GAME_PLAY_AREA_W/2}" y="{FORK_Y}"/>
 	</mx:Canvas>
+	
+	<mx:Image id="logo" source="@Embed(source='assets/logo1.png')" x="697" y="263"/>
 	
 	<local:NoCachingHttpService
 		id="httpGetHightScoreList"
@@ -444,8 +498,16 @@
 		resultFormat="object"
 		result="finishGetHighScoreList(event)"
 		/>
+	
+	<mx:Label id="txtCountDown" styleName="countDownText" visible="false"
+			  x="300" y="200"
+			  textAlign="center"/>
+	
+	<mx:Zoom id="zoomIn" zoomWidthFrom="0" zoomWidthTo="1" zoomHeightFrom="0" zoomHeightTo="1" duration="300"/>
+
+	<mx:Canvas id="finishBackground" styleName="backgroundFinish" width="100%" height="100%" visible="false"/>
+	
 	<mx:Canvas id="hightscoreList" x="755" y="110" width="200" height="200"
 			   verticalScrollPolicy="auto" horizontalScrollPolicy="off">
 	</mx:Canvas>
-	
 </mx:Application>
