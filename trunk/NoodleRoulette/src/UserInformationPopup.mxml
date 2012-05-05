@@ -12,9 +12,73 @@
 			import mx.rpc.events.ResultEvent;
 			
 			public var citiesData:ArrayCollection = new ArrayCollection(
-				[ {label:"Ho Chi Minh", data:1}, 
-					{label:"Ha Noi", data:2}, 
-					{label:"Da Nang", data:3} ]);
+				[ {label:"Chọn tỉnh thành phố", data:0},
+					{label:"Hậu Giang", data:1},
+					{label:"Đắk Lắc", data:2},
+					{label:"Đắk Nông", data:3},
+					{label:"Điện Biên", data:4},
+					{label:"Hà Nội", data:5},
+					{label:"TP Hồ Chí Minh", data:6},
+					{label:"Đà Nẵng", data:7},
+					{label:"Nha Trang", data:8},
+					{label:"Hải Phòng", data:9},
+					{label:"Bắc Giang", data:10},
+					{label:"Bạc Liêu", data:11},
+					{label:"Vũng Tàu", data:12},
+					{label:"Bắc Cạn", data:13},
+					{label:"Bắc Ninh", data:14},
+					{label:"Quảng Ninh", data:15},
+					{label:"Bến Tre", data:16},
+					{label:"Cần Thơ", data:17},
+					{label:"Bình Dương", data:18},
+					{label:"Bình Định", data:19},
+					{label:"Bình Phước", data:20},
+					{label:"Bình Thuận", data:21},
+					{label:"Cà Mau", data:22},
+					{label:"Cao Bằng", data:23},
+					{label:"Đồng Nai", data:24},
+					{label:"Đồng Tháp", data:25},
+					{label:"Gia Lai", data:26},
+					{label:"Hà Giang", data:27},
+					{label:"Hà Nam", data:28},
+					{label:"Hà Tây", data:29},
+					{label:"Hà Tĩnh", data:30},
+					{label:"Hải Dương", data:31},
+					{label:"Hòa Bình", data:32},
+					{label:"Hưng Yên", data:33},
+					{label:"Khánh Hòa", data:34},
+					{label:"Kiên Giang", data:35},
+					{label:"Kon Tum", data:36},
+					{label:"Lai Châu", data:37},
+					{label:"Lạng Sơn", data:38},
+					{label:"Lào Cai", data:39},
+					{label:"Lâm Đồng", data:40},
+					{label:"Long An", data:41},
+					{label:"Nam Định", data:42},
+					{label:"Nghệ An", data:43},
+					{label:"Ninh Bình", data:44},
+					{label:"Ninh Thuận", data:45},
+					{label:"Phú Thọ", data:46},
+					{label:"Phú Yên", data:47},
+					{label:"Quảng Bình", data:48},
+					{label:"Quảng Nam", data:49},
+					{label:"Quảng Ngãi", data:50},
+					{label:"Quảng Trị", data:51},
+					{label:"Sóc Trăng", data:52},
+					{label:"Sơn La", data:53},
+					{label:"Tây Ninh", data:54},
+					{label:"Thái Bình", data:55},
+					{label:"Thái Nguyên", data:56},
+					{label:"Thanh Hóa", data:57},
+					{label:"Thừa Thiên Huế", data:58},
+					{label:"Tiền Giang", data:59},
+					{label:"Trà Vinh", data:60},
+					{label:"Tuyên Quang", data:61},
+					{label:"Vĩnh Long", data:62},
+					{label:"Vĩnh Phúc", data:63},
+					{label:"An giang", data:64},
+					{label:"Yên Bái", data:65}
+					 ]);
 			
 			function finishSendResult(event:ResultEvent) {
 				var JSONResArr:String = String(httpSendResult.lastResult);	
@@ -46,7 +110,35 @@
 			}
 			
 			function validate():Boolean {
+				if(isEmpty(txtName.text)) {
+					alertMissingField("Họ tên");
+					return false;
+				}
+				if (isEmpty(idCarNo.text)) {
+					alertMissingField("CMND");
+					return false;
+				}
+				if (isEmpty(phone.text)) {
+					alertMissingField("Điện thoại");
+					return false;
+				}
+				if (isEmpty(address.text)) {
+					alertMissingField("Địa chỉ");
+					return false;
+				}
+				if (cities.selectedItem.data == 0) {
+					alertMissingField("Thành phố");
+					return false;
+				}
 				return true;
+			}
+			
+			function isEmpty(str:String) {
+				return str == null || str.length == 0;
+			}
+			
+			function alertMissingField(field:String) {
+				Alert.show("Hãy điền vào ô \"" + field + "\"");
 			}
 			
 			function onSendButtonClicked() {

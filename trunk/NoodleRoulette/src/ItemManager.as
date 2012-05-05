@@ -31,36 +31,16 @@ package
 		
 		[Embed(source="assets/item07.png")]
 		[Bindable]
-		private var item07ImgCls:Class;
-		
-		[Embed(source="assets/item08.png")]
-		[Bindable]
-		private var item08ImgCls:Class;
-		
-		[Embed(source="assets/item09.png")]
-		[Bindable]
-		private var item09ImgCls:Class;
-		
-		[Embed(source="assets/item10.png")]
-		[Bindable]
-		private var item10ImgCls:Class;
-		
-		[Embed(source="assets/item11.png")]
-		[Bindable]
-		private var item11ImgCls:Class;
+		private var diskImgCls:Class;
 		
 		private var TEMPLATE_ITEMS:Array = new Array(
-			(new Item()).init(10, 50, 50,item01ImgCls),
-			(new Item()).init(20, 50, 50,item02ImgCls),
-			(new Item()).init(30, 50, 50,item03ImgCls),
-			(new Item()).init(40, 50, 50,item04ImgCls),
-			(new Item()).init(50, 50, 50,item05ImgCls),
-			(new Item()).init(0, 50, 50,item06ImgCls, true),
-			(new Item()).init(60, 50, 50,item07ImgCls),
-			(new Item()).init(70, 50, 50,item08ImgCls),
-			(new Item()).init(80, 50, 50,item09ImgCls),
-			(new Item()).init(90, 50, 50,item10ImgCls),
-			(new Item()).init(100, 50, 50,item11ImgCls)
+			(new Item()).init(10, 80, -1, item01ImgCls),
+			(new Item()).init(20, 80, -1, item02ImgCls),
+			(new Item()).init(30, 80, -1, item03ImgCls),
+			(new Item()).init(40, 80, -1, item04ImgCls),
+			(new Item()).init(50, 80, -1, item05ImgCls),
+			(new Item()).init(0, 60, -1, item06ImgCls, true),
+			(new Item()).init(0, 90, -1, diskImgCls, false, true)
 		);
 		
 		public var items:ArrayCollection;
@@ -87,6 +67,10 @@ package
 			var newItem:Item = (TEMPLATE_ITEMS[idx] as Item).clone();
 			itemsOfIdx.addItem(newItem);
 			return newItem;
+		}
+		
+		public function allocateDiskItem():Item {
+			return allocateItem(items.length - 1);
 		}
 		
 		public function stopAll() {

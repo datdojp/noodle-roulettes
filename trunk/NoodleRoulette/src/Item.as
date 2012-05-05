@@ -9,25 +9,28 @@ package
 		public var moveEffect:EllipseMove;
 		
 		public var score:int;
-		public var isSpecial:Boolean;
+		public var isGift:Boolean;
+		public var isDisk:Boolean;
 		public var imgClass:Class;
 		
 		public function Item() {
 		}
 		
-		public function init(score:int, width:int, height:int, imgClass:Class, isSpecial:Boolean = false):Item
+		public function init(score:int, width:int, height:int, imgClass:Class, isGift:Boolean = false, isDisk:Boolean = false):Item
 		{
 			this.score = score;
-			this.isSpecial = isSpecial;
+			this.isGift = isGift;
+			this.isDisk = isDisk;
 			this.imgClass = imgClass;
 			this.image = new Image();
+			var imageSource:BitmapAsset = new imgClass() as BitmapAsset;
+			this.image.source = imageSource;
 			this.image.width = width;
-			this.image.height = height;
-			this.image.source = new imgClass() as BitmapAsset;
+			this.image.height = imageSource.height * width / imageSource.width;
 			this.moveEffect = new EllipseMove();
 			this.moveEffect.setTarget(this.image);
-			this.moveEffect.targetOriginalWidth = width;
-			this.moveEffect.targetOriginalHeight = height;
+			this.moveEffect.targetOriginalWidth = this.image.width;
+			this.moveEffect.targetOriginalHeight = this.image.height;
 			
 			return this;
 		}
@@ -35,7 +38,7 @@ package
 		public function clone():Item {
 			var result:Item = (new Item()).init(
 				this.score, this.image.width, this.image.height, 
-				this.imgClass, this.isSpecial);
+				this.imgClass, this.isGift, this.isDisk);
 			result.moveEffect.dInterval = this.moveEffect.dInterval;
 			return result;
 		}

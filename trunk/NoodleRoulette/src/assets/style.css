@@ -1,5 +1,5 @@
 .background {
-	background-image:Embed(source='background.png');
+	background-image:Embed(source='background.jpg');
 }
 
 .score {
@@ -9,9 +9,17 @@
 	font-size: 30;
 }
 
+@font-face {
+	src:url("digital-7.ttf");
+	fontFamily: digitFont;
+	advancedAntiAliasing: true;
+}
+
 .time {
-	font-family: Arial;
+	font-family: digitFont;
 	color: black;
-	font-weight: bold;
 	font-size: 30;
 }
+
+
+
