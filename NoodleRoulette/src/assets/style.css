@@ -2,23 +2,50 @@
 	background-image:Embed(source='background.jpg');
 }
 
-.score {
-	font-family: Arial;
-	color: red;
-	font-weight: bold;
-	font-size: 30;
+.backgroundFinish {
+	background-image:Embed(source='result_background.jpg');
 }
+
+.backgroundSubmit {
+	background-image:Embed(source='submit_background.jpg');
+}
+
+.textbox1 {
+	background-image:Embed(source='textbox1.png');
+}
+.textbox2 {
+	background-image:Embed(source='textbox2.png');
+}
+
+.textbox3 {
+	background-image:Embed(source='textbox3.png');
+}
+.combobox {
+	background-image:Embed(source='dropdown.png');
+}
+
 
 @font-face {
 	src:url("digital-7.ttf");
 	fontFamily: digitFont;
 	advancedAntiAliasing: true;
 }
+.score {
+	font-family: digitFont;
+	color: red;
+	font-size: 50;
+}
 
 .time {
 	font-family: digitFont;
 	color: black;
 	font-size: 30;
+}
+
+.countDownText {
+	font-family: digitFont;
+	color: #ffff00;
+	font-size: 300pt;
 }
 
 .gameRule {

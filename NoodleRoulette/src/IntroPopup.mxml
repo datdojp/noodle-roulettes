@@ -4,6 +4,8 @@
 		   creationComplete="init()">
 	<mx:Script>
 		<![CDATA[
+			import mx.core.Application;
+			import mx.managers.PopUpManager;
 			function init() {
 				txtGameRule.text = "Bộ trưởng Khoa học và Công nghệ là khách mời thứ 12 tham gia chương trình Dân hỏi - Bộ trưởng trả lời trên cổng thông tin Chính phủ, theo chỉ đạo của Thủ tướng từ đầu tháng 3 tới nay. Tại buổi đối thoại trực tuyến với nhân dân hôm nay, Bộ trưởng dành hơn 2 tiếng trả lời về nhiều vấn đề quan trọng của ngành như cơ chế ưu đãi nhà khoa học, tái cơ cấu, đổi mới mô hình quản lý khoa học và công nghệ, cây trồng biến đổi gene, lĩnh vực sở hữu trí tuệ, chất lượng mũ bảo hiểm và đặc biệt là câu chuyện điện hạt nhân, cháy nổ xe cơ giới thời gian qua.\nGood data validation for URLs can mean different things depending on the usage of the URL within the overall application. The most common data validation techniques include validating that the URL is of the appropriate scheme. For instance, unintentionally allowing javascript: URLs may result in cross-site scripting. Validating that the URL is a within your domain can ensure that the SWF file can't be used as an open-redirector by people who conduct phishing attacks. For additional security, you may also choose to validate the path of the URL and to validate that the URL conforms to the RFC guidelines\nFor example, the following code shows a simple example of performing data validation by denying any URL that does not begin with http:// or https:// and validating that the URL is within your domain name. This example may not be appropriate for all web applications and you should consider whether additional checks against the URL are necessary.";	
 			}
@@ -12,6 +14,7 @@
 				makeAllInactive();
 				gameRule.styleName = "gameRuleActive";
 				txtGameRule.visible = true;
+				btnStart.visible = true;
 			}
 			function howToPlayClicked() {
 				makeAllInactive();
@@ -27,19 +30,74 @@
 				howToPlay.styleName = "howToPlay";
 				txtGameRule.visible = false;
 				canvasHowToPlay.visible = false;
+				btnStart.visible = false;
+			}
+			
+			function selectKeyboard() {
+				Application.application.initKeyboardMode();
+				Application.application.setFocus();
+				PopUpManager.removePopUp(this);
+				Application.application.startCountDown();
+			}
+			
+//			function selectMouse() {
+//				Application.application.initMouseMode();
+//				PopUpManager.removePopUp(this);	
+//				Application.application.startRoullete();
+//			}
+			
+			function selectWebcam() {
+				Application.application.initWebcamMode();
+				PopUpManager.removePopUp(this);
+				Application.application.startCountDown();
 			}
 		]]>
 	</mx:Script>
 	
-	<mx:Canvas id="gameRule" x="120" y="34" width="88" height="35" click="{gameRuleClicked()}" styleName="gameRuleActive"/>
-	<mx:Canvas id="howToPlay" x="202" y="34" width="88" height="35" click="{howToPlayClicked()}" styleName="howToPlay"/>
-	<mx:Canvas id="hightscoreListLink" x="284" y="34" width="164" height="35" click="{hightscoreListLinkClicked()}" styleName="hightscoreListLink"/>
+	<mx:Canvas id="gameRule" x="120" y="34" width="88" height="35" click="{gameRuleClicked()}" styleName="gameRuleActive"
+			   useHandCursor="true"
+			   buttonMode="true"/>
+	<mx:Canvas id="howToPlay" x="202" y="34" width="88" height="35" click="{howToPlayClicked()}" styleName="howToPlay"
+			   useHandCursor="true"
+			   buttonMode="true"/>
+	<mx:Canvas id="hightscoreListLink" x="284" y="34" width="164" height="35" click="{hightscoreListLinkClicked()}" styleName="hightscoreListLink"
+			   useHandCursor="true"
+			   buttonMode="true"/>
 	
+	<mx:Image id="btnStart" source="@Embed(source='assets/but_play.png')" x="520" y="50" 
+			  mouseOver="{glowImage.play([btnStart])}"
+			  mouseOut="{unglowImage.play([btnStart])}"
+			  click="howToPlayClicked()"
+			  useHandCursor="true"
+			  buttonMode="true"/>
 	<mx:TextArea id="txtGameRule" styleName="txtGameRule" editable="false" width="486" height="266" x="90" y="80"
 				 paddingLeft="20" paddingBottom="20" paddingRight="20" paddingTop="20"/>
-	<mx:Canvas id="canvasHowToPlay" width="550" height="266" x="90" y="80" backgroundColor="#ff0000" visible="false"
+	<mx:Canvas id="canvasHowToPlay" width="550" height="290" x="90" y="80" visible="false" 
 			   verticalScrollPolicy="off" horizontalScrollPolicy="off">
-		<mx:Image source="@Embed(source='assets/opt_motion.png')"/>
-		<mx:Image source="@Embed(source='assets/opt_keys.png')" x="100" y="100"/>
+		<mx:Image source="@Embed(source='assets/opt_motion.png')" x="20"/>
+		<mx:Image id="optMotion" source="@Embed(source='assets/sample.png')" y="177" x="10"
+				  mouseOver="{glowImage.play([optMotion])}"
+				  mouseOut="{unglowImage.play([optMotion])}"
+				  useHandCursor="true"
+				  buttonMode="true"
+				  click="selectWebcam()"/>
+		<mx:Image source="@Embed(source='assets/arrows.png')" y="227" x="21"/>
+		<mx:Image id="optKey" source="@Embed(source='assets/opt_keys.png')" x="400" y="140" 
+				  mouseOver="{glowImage.play([optKey])}"
+				  mouseOut="{unglowImage.play([optKey])}"
+				  useHandCursor="true"
+				  buttonMode="true"
+				  click="selectKeyboard()"/>
 	</mx:Canvas>
+	<mx:Glow id="glowImage" duration="200"
+			 alphaFrom="1.0" alphaTo="0.3"
+			 blurXFrom="0.0" blurXTo="30.0"
+			 blurYFrom="0.0" blurYTo="30.0"
+			 color="0x0000FF"/>
+	<mx:Glow id="unglowImage" duration="200"
+			 alphaFrom="0.3" alphaTo="1.0"
+			 blurXFrom="30.0" blurXTo="0.0"
+			 blurYFrom="30.0" blurYTo="0.0"
+			 color="0x0000FF"/>
+	
 </mx:Canvas>

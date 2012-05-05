@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300"
-		   backgroundColor="white" xmlns:local="*">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="965" height="400"
+		   styleName="backgroundSubmit" xmlns:local="*">
 	<mx:Script>
 		<![CDATA[
 			import com.adobe.serialization.json.JSON;
@@ -12,7 +12,7 @@
 			import mx.rpc.events.ResultEvent;
 			
 			public var citiesData:ArrayCollection = new ArrayCollection(
-				[ {label:"Chọn tỉnh thành phố", data:0},
+				[ {label:"-Chọn-", data:0},
 					{label:"Hậu Giang", data:1},
 					{label:"Đắk Lắc", data:2},
 					{label:"Đắk Nông", data:3},
@@ -172,20 +172,39 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:Label x="56" y="36" text="Họ tên"/>
-	<mx:TextInput id="txtName" x="120" y="34" focusOut="{autoComplete();}"/>
-	<mx:Label x="56" y="88" text="CMND"/>
-	<mx:TextInput id="idCarNo" x="120" y="86"/>
-	<mx:Label x="58" y="126" text="Điện thoại"/>
-	<mx:TextInput id="phone" x="120" y="124"/>
-	<mx:Label x="63" y="171" text="Địa chỉ"/>
-	<mx:TextInput id="address" x="120" y="169"/>
-	<mx:Label x="63" y="208" text="Thành phố"/>
-	<mx:ComboBox id="cities" x="127" y="206" dataProvider="{citiesData}">
-		
-	</mx:ComboBox>
+	<mx:Canvas styleName="textbox1" x="0" y="100" width="298" height="30">
+		<mx:TextInput id="txtName" focusOut="{autoComplete();}" 
+					  borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
+					  width="286" height="18" x="6" y="6" />
+	</mx:Canvas>
+	<mx:Canvas styleName="textbox1" x="0" y="150" width="298" height="30">
+		<mx:TextInput id="idCarNo" 
+					  borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
+					  width="286" height="18" x="6" y="6" />
+	</mx:Canvas>
+	<mx:Canvas styleName="textbox3" x="0" y="200" width="244" height="30">
+		<mx:TextInput id="phone" 
+					  borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
+					  width="232" height="18" x="6" y="6"/>
+	</mx:Canvas>
+	<mx:Canvas styleName="textbox1" x="0" y="250" width="298" height="30">
+		<mx:TextInput id="address"
+					  borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
+					  width="286" height="18" x="6" y="6" />
+	</mx:Canvas>
+	<mx:Canvas styleName="combobox" x="0" y="300" width="103" height="30" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		<mx:ComboBox id="cities" dataProvider="{citiesData}"
+					 themeColor="#ffffff" fillAlphas="[0,0]" fillColors="[#ffffff, #ffffff]"
+					 width="91" height="18" x="6" y="6" />
+		<mx:Image source="@Embed(source='assets/combobox_arrow.png')" x="81" y="10"/>
+	</mx:Canvas>
+	<mx:Canvas styleName="textbox3" x="0" y="350" width="142" height="30">
+		<mx:TextInput id="email"
+					 borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
+					 width="130" height="18" x="6" y="6" />
+	</mx:Canvas>
+	
 	<mx:Button x="79.65" y="268" label="Hoàn tất" click="{onSendButtonClicked()}"/>
-	<mx:Button x="222" y="268" label="Hủy" click="{PopUpManager.removePopUp(this);}"/>
 	
 	<local:NoCachingHttpService
 		id="httpSendResult"
