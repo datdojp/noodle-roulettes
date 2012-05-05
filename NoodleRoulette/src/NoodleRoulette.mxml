@@ -38,7 +38,7 @@
 			function init() {
 				instance = this;
 				
-				this.frontBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2);
+				this.frontBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2 + 20);
 				this.frontBeltEllipse.a = gamePlayArea.width / 2 + 200;
 				this.frontBeltEllipse.b = 140;
 				
@@ -70,7 +70,7 @@
 			}
 			
 			public function startRoullete():void {
-				remainingTime = 5 * 1000;
+				remainingTime = 60 * 1000;
 				mainTimer = new Timer(MAIN_TIMER_INTERVAL, 0);
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
@@ -128,6 +128,12 @@
 				}
 
 				if (needNewItem) {
+					var disk:Item = itemManager.allocateDiskItem();
+					gamePlayArea.addChild(disk.image);
+					itemsInFrontBelt.addItem(disk);
+					initForFrontBelt(disk.moveEffect);
+					disk.moveEffect.start();
+					
 					var item:Item = itemManager.allocateItem(getRandomIdx());
 					gamePlayArea.addChild(item.image);
 					itemsInFrontBelt.addItem(item);
@@ -138,6 +144,11 @@
 				//handle dummy belt
 				needNewItem = false;
 				if (lastDummyItem == null || Math.abs(lastDummyItem.moveEffect.x - lastDummyItem.moveEffect.fromX) > 100) {
+					var disk:Item = itemManager.allocateDiskItem();
+					gamePlayArea.addChild(disk.image);
+					initForDummyBelt(disk.moveEffect);
+					disk.moveEffect.start();
+					
 					var dummyItem:Item = itemManager.allocateItem(getRandomIdx());
 					gamePlayArea.addChild(dummyItem.image);
 					lastDummyItem = dummyItem;
@@ -147,7 +158,7 @@
 			}
 			
 			public function getRandomIdx():int {
-				return Math.floor(Math.random() * 10);
+				return Math.floor(Math.random() * (itemManager.items.length - 1));
 			}
 			
 			public function initForFrontBelt(ellipseMove:EllipseMove):EllipseMove {
@@ -184,7 +195,7 @@
 				var forkDownEffect:Move = new Move();
 				forkDownEffect.target = fork;
 				forkDownEffect.xBy = 0;
-				forkDownEffect.yBy = 200;
+				forkDownEffect.yBy = 220;
 				forkDownEffect.duration = 300;
 				forkDownEffect.addEventListener(EffectEvent.EFFECT_END,
 					function(event:EffectEvent) {
@@ -193,7 +204,7 @@
 						var caughtItem:Item;
 						for (var i:int = 0; i < itemsInFrontBelt.length; i++) {
 							var item:Item = itemsInFrontBelt.getItemAt(i) as Item;
-							if (isCaught(item.image)) {
+							if (!item.isDisk && isCaught(item.image)) {
 								itemsInFrontBelt.removeItemAt( itemsInFrontBelt.getItemIndex(item) );
 								item.moveEffect.freeze();
 								if (gamePlayArea.getChildIndex(item.image) >= 0) {
@@ -207,7 +218,7 @@
 							}
 						}
 						if (caughtItem != null) {
-							moveEffectOfForkAndItem.xBy = ((bowl.x + bowl.width/2) - fork.width/2) - fork.x;
+							moveEffectOfForkAndItem.xBy = ((bowl.x + bowl.width/2) - fork.width/2) - fork.x + 50;
 							moveEffectOfForkAndItem.yBy = -fork.y;
 							var isMEOFAIEnded:Boolean = false;
 							moveEffectOfForkAndItem.addEventListener(EffectEvent.EFFECT_END,
@@ -260,20 +271,14 @@
 			}
 			
 			function isCaught(target:UIComponent):Boolean {
-				var forkRect:Rectangle = fork.getRect(this);
+				var forkRect:Rectangle = new Rectangle(fork.x - gamePlayArea.x + 5, fork.y - gamePlayArea.y, fork.width / 6, fork.height);
 				var targetRect:Rectangle = new Rectangle(target.x + target.width / 6, target.y, target.width * 2 / 3, target.height);
 				
 				if (!forkRect.intersects(targetRect)) return false;
 				
-				var intersect:Rectangle = forkRect.intersection(targetRect);
-				return intersect.width >= forkRect.width / 2;
+				var intersectRect = forkRect.intersection(targetRect);
+				return intersectRect.width > forkRect.width * 2 / 3;
 			}
-			
-//			public function isOverlap(obj1:UIComponent, obj2:UIComponent):Boolean {
-//				var rect1:Rectangle = new Rectangle(obj1.x, obj1.y, obj1.width, obj1.height);
-//				var rect2:Rectangle = new Rectangle(obj2.x, obj2.y, obj2.width, obj2.height);
-//				return rect1.intersects(rect2);
-//			}
 			
 			public const CONTROL_MODE_KEYBOARD = 1;
 			public const CONTROL_MODE_MOUSE = 2;
@@ -425,9 +430,9 @@
 	
 	<mx:Label id="score" x="310" y="245" width="100" styleName="score" text="0" textAlign="center"/>
 	
-	<mx:Image id="fork" source="@Embed(source='assets/fork.png')"/>	
+	<mx:Image id="fork" source="@Embed(source='assets/chopstick.png')" width="100" height="150"/>	
 	<mx:Canvas id="clock" x="596" y="10" backgroundImage="@Embed(source='assets/clock.png')" width="98" height="46">
-		<mx:Label id="time" text="00:00" styleName="time"/>
+		<mx:Label id="time" text="00:00" styleName="time" />
 	</mx:Canvas>
 	
 	<local:NoCachingHttpService
