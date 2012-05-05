@@ -52,9 +52,11 @@
 				
 				this.moveEffectOfFork.target = fork;
 				
-				var controlModeSelectionPopup:ControllModeSelectionPopup = new ControllModeSelectionPopup();
-				centerUIComponent(this, controlModeSelectionPopup);
-				PopUpManager.addPopUp(controlModeSelectionPopup, this, false);
+//				var controlModeSelectionPopup:ControllModeSelectionPopup = new ControllModeSelectionPopup();
+//				centerUIComponent(this, controlModeSelectionPopup);
+//				PopUpManager.addPopUp(controlModeSelectionPopup, this, false);
+				var intro:IntroPopup = new IntroPopup();
+				PopUpManager.addPopUp(intro, this, false);
 				
 				updateHighscoreList();				
 			}
