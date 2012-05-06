@@ -6,6 +6,10 @@
 		<![CDATA[
 			import com.adobe.serialization.json.JSON;
 			
+			import flash.events.Event;
+			import flash.media.Sound;
+			import flash.net.URLRequest;
+			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.controls.Image;
@@ -29,7 +33,15 @@
 			var remainingTime:int;
 			var mainTimer:Timer;
 			
-			const TOTAL_TIME = 30 * 1000; //TODO
+			// Sound variables
+			var background1:Sound = new Sound();
+			var background4:Sound = new Sound();
+			var itemTaken:Sound = new Sound();
+			var background1Channel:SoundChannel;
+			var background4Channel:SoundChannel;
+			var itemTakenChannel:SoundChannel;
+			
+			const TOTAL_TIME = 40 * 1000; //TODO
 			
 			const MAIN_TIMER_INTERVAL:int = 10;
 			const SPEED_CHANGE_AFTER:int = 3000;
@@ -58,6 +70,11 @@
 			
 			function init() {
 				_highscoreList = hightscoreList;
+				
+				// Init sounds
+				background1 = new Sound(new URLRequest("assets/background1.mp3"));
+				background4 = new Sound(new URLRequest("assets/background4.mp3"));
+				itemTaken = new Sound(new URLRequest("assets/itemtaken.mp3"));
 				
 				this.frontBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2 + 20);
 				this.frontBeltEllipse.a = gamePlayArea.width / 2 + 200;
@@ -131,12 +148,18 @@
 				mainTimer = new Timer(MAIN_TIMER_INTERVAL, 0);
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
+				
+				// Play background sound
+				background1Channel = background1.play(0,30);
 			}
 			
 			public function stopGame() {
 				mainTimer.stop();
 				disableCurrentMode();
 				itemManager.stopAll();
+				
+				// Stop sound
+				background4Channel.stop();
 			}
 			
 			var lastDummyItem;
@@ -170,6 +193,11 @@
 				var sec:int = (remainingTime - min * 60 * 1000) / 1000;
 				time.text = (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
 				
+				// Play other sound
+				if (remainingTime <= 30 * 1000 && background4Channel == null) {
+					background1Channel.stop();
+					background4Channel = background4.play(0,2);
+				}
 				
 				//handle back belt
 				if (itemsInFrontBelt.length > 0) {
@@ -301,6 +329,9 @@
 							}
 						}
 						if (caughtItem != null) {
+							// Play sound
+							itemTaken.play();
+							
 							moveEffectOfForkAndItem.xBy = ((bowl.x + bowl.width/2) - fork.width/2 - forkContainer.x) - fork.x + 110;
 							moveEffectOfForkAndItem.yBy = FORK_Y-fork.y;
 							var isMEOFAIEnded:Boolean = false;
