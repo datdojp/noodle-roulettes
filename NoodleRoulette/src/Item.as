@@ -31,6 +31,9 @@ package
 			this.moveEffect.setTarget(this.image);
 			this.moveEffect.targetOriginalWidth = this.image.width;
 			this.moveEffect.targetOriginalHeight = this.image.height;
+			if (isDisk) {
+				this.moveEffect.marginTop = 10;
+			}
 			
 			return this;
 		}

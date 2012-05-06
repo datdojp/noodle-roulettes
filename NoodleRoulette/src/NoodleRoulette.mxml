@@ -30,6 +30,7 @@
 			var itemsInBackBelt:ArrayCollection = new ArrayCollection();
 			var moveEffectOfFork:Move = new Move();
 			var totalScore:int = 0;
+			var scoreMultipliedBy = 1;
 			var remainingTime:int;
 			var mainTimer:Timer;
 			
@@ -68,12 +69,20 @@
 			const N_GIFTS = 3;
 			var giftTimes:Array;
 			
+			const N_EMPTY_DISK = Math.floor(TOTAL_TIME / (10*1000));
+			var emptyDiskTimes:Array;
+			
 			public static var _highscoreList;
 
-			function initGiftTimes() {
+			function initTimes() {
 				giftTimes = new Array();
 				for (var i = 0;  i < N_GIFTS; i++) {
 					giftTimes.push(Math.random() * TOTAL_TIME);
+				}
+				
+				emptyDiskTimes = new Array();
+				for (var i = 0; i < N_EMPTY_DISK; i++) {
+					emptyDiskTimes.push(Math.random() * TOTAL_TIME);
 				}
 			}
 			
@@ -152,7 +161,7 @@
 			
 			public function startRoullete():void {
 				score.visible = true;
-				initGiftTimes();
+				initTimes();
 				remainingTime = TOTAL_TIME;
 				mainTimer = new Timer(MAIN_TIMER_INTERVAL, 0);
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
@@ -238,7 +247,7 @@
 							break;
 						}
 					}
-					lastAllocateTime = remainingTime;
+					
 					if (needGift) {
 						var gift:Item = itemManager.allocateGiftItem();
 						gamePlayArea.addChild(gift.image);
@@ -246,18 +255,32 @@
 						initForFrontBelt(gift.moveEffect);
 						gift.moveEffect.start();
 					} else {
-						var disk:Item = itemManager.allocateDiskItem();
-						gamePlayArea.addChild(disk.image);
-						itemsInFrontBelt.addItem(disk);
-						initForFrontBelt(disk.moveEffect);
-						disk.moveEffect.start();
+						var idx = getRandomIdx();
+						var isEmptyDisk = false;
+						if (idx != itemManager.items.length - 2 - 1) {
+							var disk:Item = itemManager.allocateDiskItem();
+							gamePlayArea.addChild(disk.image);
+							itemsInFrontBelt.addItem(disk);
+							initForFrontBelt(disk.moveEffect);
+							disk.moveEffect.start();
+							
+							for (var i = 0; i < emptyDiskTimes.length; i++) {
+								if (remainingTime <= emptyDiskTimes[i] && emptyDiskTimes[i] <= lastAllocateTime) {
+									isEmptyDisk = true;
+									break;
+								}
+							}
+						}
 						
-						var item:Item = itemManager.allocateItem(getRandomIdx());
-						gamePlayArea.addChild(item.image);
-						itemsInFrontBelt.addItem(item);
-						initForFrontBelt(item.moveEffect);
-						item.moveEffect.start();
+						if (!isEmptyDisk) {
+							var item:Item = itemManager.allocateItem(idx);
+							gamePlayArea.addChild(item.image);
+							itemsInFrontBelt.addItem(item);
+							initForFrontBelt(item.moveEffect);
+							item.moveEffect.start();
+						}
 					}
+					lastAllocateTime = remainingTime;
 				}
 				
 				//handle dummy belt
@@ -365,7 +388,7 @@
 											disappear.addEventListener(EffectEvent.EFFECT_END, 
 												function(event:Event) {
 													caughtItem.moveEffect.unfreeze();
-													totalScore += caughtItem.score;
+													totalScore += caughtItem.score * scoreMultipliedBy;
 													score.text = totalScore.toString();
 													caughtItem = null;
 												}
@@ -431,6 +454,7 @@
 			var motionTrackerTimer:Timer;
 			var lastMotionTrackerY:Number;
 			public function initWebcamMode() {
+				scoreMultipliedBy = 2;
 				controlMode = CONTROL_MODE_WEBCAM;
 				if (motionTracker == null && motionTrackerTimer == null) {
 					var camW : int = gamePlayArea.width;
@@ -449,6 +473,7 @@
 					motionTracker = new MotionTracker(vid);
 					
 					motionTrackerTimer = new Timer(100, 0);
+					var lastMotionY;
 					motionTrackerTimer.addEventListener(TimerEvent.TIMER,
 						function(event:Event) {
 							// Tell the MotionTracker to update itself
@@ -460,9 +485,11 @@
 							var motionX:Number = motionTracker.motionArea.x + motionTracker.motionArea.width / 2;
 							var motionY:Number = motionTracker.motionArea.y + motionTracker.motionArea.height / 2;
 							
+							if (lastMotionY == 0)lastMotionY = motionY;
+							
 							// Move the target with some easing
 							moveEffectOfFork.stop();
-							moveEffectOfFork.xTo = gamePlayArea.x + gamePlayArea.width - motionX;
+							moveEffectOfFork.xTo = forkContainer.width - motionX;
 							moveEffectOfFork.yTo = FORK_Y;
 							moveEffectOfFork.play();
 //							if (Math.abs(gamePlayArea.y + gamePlayArea.height - motionY) < 100) {
@@ -471,6 +498,8 @@
 							if (motionY > 300) {
 								forkDown();
 							}
+							
+							lastMotionY = motionY;
 						}
 					);
 					motionTrackerTimer.start();
