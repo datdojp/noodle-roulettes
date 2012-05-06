@@ -24,6 +24,8 @@ package
 		public var targetOriginalWidth:Number;
 		public var targetOriginalHeight:Number;
 		
+		public var marginTop:int = 0;
+		
 		public static const DEFAULT_D_INTERVAL = 50;
 		
 		public static var GLOBAL_SPEED_RATE = 1;
@@ -132,7 +134,7 @@ package
 		}
 		
 		public function getRealY(y:int) {
-			return this.ellipse.center.y - y - this.move.target.height / 2;
+			return this.ellipse.center.y - y - this.move.target.height / 2 + marginTop;
 		}
 		
 		public function getY(x:int) {

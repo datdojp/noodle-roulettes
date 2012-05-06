@@ -33,12 +33,17 @@ package
 		[Bindable]
 		private var diskImgCls:Class;
 		
+		[Embed(source="assets/item08.png")]
+		[Bindable]
+		private var cupImgCls:Class;
+		
 		private var TEMPLATE_ITEMS:Array = new Array(
 			(new Item()).init(40, 80, -1, item01ImgCls),
 			(new Item()).init(30, 80, -1, item02ImgCls),
 			(new Item()).init(20, 80, -1, item03ImgCls),
 			(new Item()).init(15, 80, -1, item04ImgCls),
 			(new Item()).init(10, 80, -1, item05ImgCls),
+			(new Item()).init(5, 80, -1, cupImgCls),
 			(new Item()).init(500, 80, -1, item06ImgCls, true),
 			(new Item()).init(0, 90, -1, diskImgCls, false, true)
 		);
