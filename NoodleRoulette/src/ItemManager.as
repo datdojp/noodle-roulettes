@@ -39,7 +39,7 @@ package
 			(new Item()).init(30, 80, -1, item03ImgCls),
 			(new Item()).init(40, 80, -1, item04ImgCls),
 			(new Item()).init(50, 80, -1, item05ImgCls),
-			(new Item()).init(0, 60, -1, item06ImgCls, true),
+			(new Item()).init(500, 80, -1, item06ImgCls, true),
 			(new Item()).init(0, 90, -1, diskImgCls, false, true)
 		);
 		
@@ -71,6 +71,9 @@ package
 		
 		public function allocateDiskItem():Item {
 			return allocateItem(items.length - 1);
+		}
+		public function allocateGiftItem():Item {
+			return allocateItem(items.length - 2);
 		}
 		
 		public function stopAll() {
