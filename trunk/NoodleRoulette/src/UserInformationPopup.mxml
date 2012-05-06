@@ -4,10 +4,12 @@
 	<mx:Script>
 		<![CDATA[
 			import com.adobe.serialization.json.JSON;
+			import com.adobe.utils.IntUtil;
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.core.Application;
+			import mx.events.ValidationResultEvent;
 			import mx.managers.PopUpManager;
 			import mx.rpc.events.ResultEvent;
 			
@@ -80,15 +82,29 @@
 					{label:"Yên Bái", data:65}
 					 ]);
 			
+			const dobHint:String = "DD/MM/YYYY, ví dụ: 19/03/1986";
+			
+			function dobFocusIn() {
+				if (dob.text == dobHint) {
+					dob.text = "";
+				}
+			}
+			function dobFocusOut() {
+				if (isEmpty(dob.text)) {
+					dob.text = dobHint;
+				}
+			}
+			
 			function finishSendResult(event:ResultEvent) {
 				var JSONResArr:String = String(httpSendResult.lastResult);	
 				var result:Object = JSON.decode(JSONResArr);
 				if (result.result == null) {
 					Alert.show(result.error);
+					return;
+				} else {
+					Application.application.updateHighscoreList();
+					PopUpManager.removePopUp(this);
 				}
-				
-				Application.application.updateHighscoreList();
-				PopUpManager.removePopUp(this);
 			}
 			
 			function finishGetUserInfo(event:ResultEvent) {
@@ -105,31 +121,48 @@
 							break;
 						}
 					}
+					email.text = result[0].email;
 				}
 				
 			}
 			
 			function validate():Boolean {
 				if(isEmpty(txtName.text)) {
-					alertMissingField("Họ tên");
+					alertMissingField("Họ và tên");
+					txtName.setFocus();
 					return false;
 				}
 				if (isEmpty(idCarNo.text)) {
 					alertMissingField("CMND");
+					idCarNo.setFocus();
+					return false;
+				}
+				if (isEmpty(dob.text) || dob.text == dobHint) {
+					alertMissingField("Ngày sinh");
+					dob.setFocus();
 					return false;
 				}
 				if (isEmpty(phone.text)) {
 					alertMissingField("Điện thoại");
+					phone.setFocus();
 					return false;
 				}
 				if (isEmpty(address.text)) {
 					alertMissingField("Địa chỉ");
+					address.setFocus();
 					return false;
 				}
 				if (cities.selectedItem.data == 0) {
 					alertMissingField("Thành phố");
+					cities.setFocus();
 					return false;
 				}
+				if (isEmpty(email.text)) {
+					alertMissingField("Email");
+					email.setFocus();
+					return false;
+				}
+				
 				return true;
 			}
 			
@@ -148,10 +181,11 @@
 				params.a = "post";
 				params.fullname = txtName.text;
 				params.cmnd = idCarNo.text;
-				params.dob = dateFormatter.format(new Date());
+				params.dob = dob.text;
 				params.phone = phone.text;
 				params.address = address.text;
 				params.city = citiesData.getItemAt(cities.selectedIndex).label;
+				params.email = email.text;
 				params.score = encrypt(Application.application.totalScore);
 				httpSendResult.send(params);
 				
@@ -172,39 +206,46 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:Canvas styleName="textbox1" x="0" y="100" width="298" height="30">
+	<mx:Canvas styleName="textbox1" x="265" y="119" width="298" height="30">
 		<mx:TextInput id="txtName" focusOut="{autoComplete();}" 
 					  borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
 					  width="286" height="18" x="6" y="6" />
 	</mx:Canvas>
-	<mx:Canvas styleName="textbox1" x="0" y="150" width="298" height="30">
+	<mx:Canvas styleName="textbox1" x="265" y="152" width="298" height="30">
 		<mx:TextInput id="idCarNo" 
 					  borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
 					  width="286" height="18" x="6" y="6" />
 	</mx:Canvas>
-	<mx:Canvas styleName="textbox3" x="0" y="200" width="244" height="30">
-		<mx:TextInput id="phone" 
+	<mx:Canvas styleName="textbox3" x="265" y="185" width="224" height="30">
+		<mx:TextInput id="dob" 
 					  borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
-					  width="232" height="18" x="6" y="6"/>
+					  width="212" height="18" x="6" y="6"
+					  text="{dobHint}"
+					  focusIn="dobFocusIn()"
+					  focusOut="dobFocusOut()"
+					  />
 	</mx:Canvas>
-	<mx:Canvas styleName="textbox1" x="0" y="250" width="298" height="30">
-		<mx:TextInput id="address"
+	<mx:Canvas styleName="textbox1" x="265" y="218" width="298" height="30">
+		<mx:TextInput id="phone"
 					  borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
 					  width="286" height="18" x="6" y="6" />
 	</mx:Canvas>
-	<mx:Canvas styleName="combobox" x="0" y="300" width="103" height="30" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Canvas styleName="combobox" x="265" y="251" width="103" height="30" horizontalScrollPolicy="off" verticalScrollPolicy="off">
 		<mx:ComboBox id="cities" dataProvider="{citiesData}"
 					 themeColor="#ffffff" fillAlphas="[0,0]" fillColors="[#ffffff, #ffffff]"
 					 width="91" height="18" x="6" y="6" />
 		<mx:Image source="@Embed(source='assets/combobox_arrow.png')" x="81" y="10"/>
 	</mx:Canvas>
-	<mx:Canvas styleName="textbox3" x="0" y="350" width="142" height="30">
+	<mx:Canvas styleName="textbox2" x="423" y="251" width="142" height="30">
+		<mx:TextInput id="address"
+					  borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
+					  width="130" height="18" x="6" y="6" />
+	</mx:Canvas>
+	<mx:Canvas styleName="textbox3" x="265" y="284" width="224" height="30">
 		<mx:TextInput id="email"
 					 borderSkin="{null}" backgroundAlpha="0" themeColor="#ffffff"
-					 width="130" height="18" x="6" y="6" />
+					 width="212" height="18" x="6" y="6" />
 	</mx:Canvas>
-	
-	<mx:Button x="79.65" y="268" label="Hoàn tất" click="{onSendButtonClicked()}"/>
 	
 	<local:NoCachingHttpService
 		id="httpSendResult"
@@ -220,5 +261,6 @@
 		resultFormat="object"
 		result="finishGetUserInfo(event)"
 		/>
-	<mx:DateFormatter id="dateFormatter" formatString="YYYYMMDD"/>
+	<mx:Image source="@Embed(source='assets/but_ok.png')" x="554" y="291" click="onSendButtonClicked()"
+			  useHandCursor="true" buttonMode="true"/>
 </mx:Canvas>

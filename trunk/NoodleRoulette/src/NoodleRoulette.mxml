@@ -44,6 +44,8 @@
 			
 			public static var instance:NoodleRoulette;
 			
+			public static var _highscoreList;
+			
 			function init() {
 				instance = this;
 				
@@ -61,21 +63,24 @@
 				
 				this.moveEffectOfFork.target = fork;
 				
-//				var controlModeSelectionPopup:ControllModeSelectionPopup = new ControllModeSelectionPopup();
-//				centerUIComponent(this, controlModeSelectionPopup);
-//				PopUpManager.addPopUp(controlModeSelectionPopup, this, false);
+				displayIntroPopup();
 				
-				
-				var intro:IntroPopup = new IntroPopup();
-				PopUpManager.addPopUp(intro, this, false);
+				_highscoreList = hightscoreList;
 				
 				updateHighscoreList();
 				
-				var userInformationPopup:UserInformationPopup = new UserInformationPopup();
-				PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
+//				var userInformationPopup:UserInformationPopup = new UserInformationPopup();
+//				PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
 			}
 			
+			public function displayIntroPopup() {
+				var intro:IntroPopup = new IntroPopup();
+				PopUpManager.addPopUp(intro, this, false);
+			}
+				
+			
 			public function updateHighscoreList() {
+				addChild(_highscoreList);
 				hightscoreList.removeAllChildren();
 				httpGetHightScoreList.send(null);
 			}
@@ -112,7 +117,7 @@
 			
 			public function startRoullete():void {
 				score.visible = true;
-				remainingTime = 2 * 1000;//TODO 1 min 30 sec
+				remainingTime = 90 * 1000;//TODO 1 min 30 sec
 				mainTimer = new Timer(MAIN_TIMER_INTERVAL, 0);
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
@@ -141,6 +146,7 @@
 					var temp:Timer = new Timer(3000, 1);
 					temp.addEventListener(TimerEvent.TIMER,
 						function(event:Event) {
+							finishBackground.visible = false;
 							var userInformationPopup:UserInformationPopup = new UserInformationPopup();
 							userInformationPopup.addChild(hightscoreList);
 							PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
@@ -389,7 +395,7 @@
 							// Move the target with some easing
 							moveEffectOfFork.stop();
 							moveEffectOfFork.xTo = gamePlayArea.x + gamePlayArea.width - motionX;
-							moveEffectOfFork.yTo = 0;
+							moveEffectOfFork.yTo = FORK_Y;
 							moveEffectOfFork.play();
 //							if (Math.abs(gamePlayArea.y + gamePlayArea.height - motionY) < 100) {
 //								forkDown();
@@ -447,24 +453,55 @@
 			}
 			
 			function finishGetHighScoreList(event:ResultEvent) {
+				//add the title
+				var top5Label:Label = new Label();
+				top5Label.styleName = "top5Highscore";
+				top5Label.text = "Top 5 điểm cao nhất";
+				top5Label.percentWidth = 100;
+				top5Label.height = 20;
+				top5Label.x = 0;
+				top5Label.y = 0;
+				hightscoreList.addChild(top5Label);
+				
 				var JSONResArr:String = String(httpGetHightScoreList.lastResult);
 				if (JSONResArr != null && JSONResArr.length > 0) {
 					var arrHighscore:Array = JSON.decode(JSONResArr);
 					if (arrHighscore != null) {
-						for (var i:int = 0; i < arrHighscore.length; i++) {
+						var LINE_HEIGHT = 35;
+						var n = 5;
+						if (arrHighscore.length < n) n = arrHighscore.length;
+						for (var i:int = 0; i < n; i++) {
 							var hs = arrHighscore[i];
 							
 							var txtFullname:Label = new Label();
+							txtFullname.styleName = "highscoreFullname";
 							txtFullname.text = hs.fullname;
+							txtFullname.width = hightscoreList.width - LINE_HEIGHT;
+							txtFullname.height = LINE_HEIGHT;
 							txtFullname.x = 0;
-							txtFullname.y = i * 30;
+							txtFullname.y = i * LINE_HEIGHT + top5Label.height + 11;
 							hightscoreList.addChild(txtFullname);
 							
+							var canvas:Canvas = new Canvas();
+							canvas.styleName = "highscoreScoreBackground"; 
+							canvas.width = 43;
+							canvas.height = 43;
+							canvas.x = hightscoreList.width - canvas.width;
+							canvas.y = i * LINE_HEIGHT + top5Label.height - (canvas.width - LINE_HEIGHT)/2;
+							
 							var txtScore:Label = new Label();
+							txtScore.styleName = "highscoreScoreText3Digit";
 							txtScore.text = hs.score;
-							txtScore.x = 100;
-							txtScore.y = i * 30;
-							hightscoreList.addChild(txtScore);
+							txtScore.percentWidth = 100;
+							txtScore.percentHeight = 100;
+							txtScore.y = 12;
+							if (txtScore.text.length > 3) {
+								txtScore.styleName = "highscoreScoreText4Digit";
+								txtScore.y = 13;
+							}
+							canvas.addChild(txtScore);
+							
+							hightscoreList.addChild(canvas);
 						}
 					}
 				}
@@ -507,7 +544,8 @@
 
 	<mx:Canvas id="finishBackground" styleName="backgroundFinish" width="100%" height="100%" visible="false"/>
 	
-	<mx:Canvas id="hightscoreList" x="755" y="110" width="200" height="200"
-			   verticalScrollPolicy="auto" horizontalScrollPolicy="off">
+	<mx:Canvas id="hightscoreList" x="772" y="102" width="165" height="200"
+			   verticalScrollPolicy="off" horizontalScrollPolicy="off">
+		
 	</mx:Canvas>
 </mx:Application>
