@@ -29,6 +29,8 @@
 			var remainingTime:int;
 			var mainTimer:Timer;
 			
+			const TOTAL_TIME = 30 * 1000; //TODO
+			
 			const MAIN_TIMER_INTERVAL:int = 10;
 			const SPEED_CHANGE_AFTER:int = 3000;
 			var mainTimerCounter:int = 0;
@@ -42,12 +44,20 @@
 			const FORK_CATCHABLE_AREA_X = 18;
 			const FORK_CATCHABLE_AREA_W = 44 - 18;
 			
-			public static var instance:NoodleRoulette;
+			const N_GIFTS = 3;
+			var giftTimes:Array;
 			
 			public static var _highscoreList;
+
+			function initGiftTimes() {
+				giftTimes = new Array();
+				for (var i = 0;  i < N_GIFTS; i++) {
+					giftTimes.push(Math.random() * TOTAL_TIME);
+				}
+			}
 			
 			function init() {
-				instance = this;
+				_highscoreList = hightscoreList;
 				
 				this.frontBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2 + 20);
 				this.frontBeltEllipse.a = gamePlayArea.width / 2 + 200;
@@ -63,11 +73,9 @@
 				
 				this.moveEffectOfFork.target = fork;
 				
-				displayIntroPopup();
-				
-				_highscoreList = hightscoreList;
-				
 				updateHighscoreList();
+				
+				displayIntroPopup();
 				
 //				var userInformationPopup:UserInformationPopup = new UserInformationPopup();
 //				PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
@@ -75,12 +83,12 @@
 			
 			public function displayIntroPopup() {
 				var intro:IntroPopup = new IntroPopup();
+				intro.addChild(_highscoreList);
 				PopUpManager.addPopUp(intro, this, false);
 			}
 				
 			
 			public function updateHighscoreList() {
-				addChild(_highscoreList);
 				hightscoreList.removeAllChildren();
 				httpGetHightScoreList.send(null);
 			}
@@ -91,6 +99,7 @@
 			}
 			
 			public function startCountDown() {
+				addChild(_highscoreList);
 				txtCountDown.text = "3";
 				txtCountDown.visible = true;
 				zoomIn.play([txtCountDown]);
@@ -117,7 +126,8 @@
 			
 			public function startRoullete():void {
 				score.visible = true;
-				remainingTime = 90 * 1000;//TODO 1 min 30 sec
+				initGiftTimes();
+				remainingTime = TOTAL_TIME;
 				mainTimer = new Timer(MAIN_TIMER_INTERVAL, 0);
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
@@ -130,6 +140,7 @@
 			}
 			
 			var lastDummyItem;
+			var lastAllocateTime = MAIN_TIMER_INTERVAL;
 			function onTimer(event:TimerEvent) {
 				mainTimerCounter += MAIN_TIMER_INTERVAL;
 				if (mainTimerCounter > SPEED_CHANGE_AFTER) {
@@ -148,7 +159,7 @@
 						function(event:Event) {
 							finishBackground.visible = false;
 							var userInformationPopup:UserInformationPopup = new UserInformationPopup();
-							userInformationPopup.addChild(hightscoreList);
+							userInformationPopup.addChild(_highscoreList);
 							PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
 						}
 					);
@@ -183,17 +194,33 @@
 				}
 
 				if (needNewItem) {
-					var disk:Item = itemManager.allocateDiskItem();
-					gamePlayArea.addChild(disk.image);
-					itemsInFrontBelt.addItem(disk);
-					initForFrontBelt(disk.moveEffect);
-					disk.moveEffect.start();
-					
-					var item:Item = itemManager.allocateItem(getRandomIdx());
-					gamePlayArea.addChild(item.image);
-					itemsInFrontBelt.addItem(item);
-					initForFrontBelt(item.moveEffect);
-					item.moveEffect.start();
+					var needGift = false;
+					for (var i = 0; i < giftTimes.length; i++) {
+						if (remainingTime <= giftTimes[i] && giftTimes[i] <= lastAllocateTime) {
+							needGift = true;
+							break;
+						}
+					}
+					lastAllocateTime = remainingTime;
+					if (needGift) {
+						var gift:Item = itemManager.allocateGiftItem();
+						gamePlayArea.addChild(gift.image);
+						itemsInFrontBelt.addItem(gift);
+						initForFrontBelt(gift.moveEffect);
+						gift.moveEffect.start();
+					} else {
+						var disk:Item = itemManager.allocateDiskItem();
+						gamePlayArea.addChild(disk.image);
+						itemsInFrontBelt.addItem(disk);
+						initForFrontBelt(disk.moveEffect);
+						disk.moveEffect.start();
+						
+						var item:Item = itemManager.allocateItem(getRandomIdx());
+						gamePlayArea.addChild(item.image);
+						itemsInFrontBelt.addItem(item);
+						initForFrontBelt(item.moveEffect);
+						item.moveEffect.start();
+					}
 				}
 				
 				//handle dummy belt
@@ -213,7 +240,7 @@
 			}
 			
 			public function getRandomIdx():int {
-				return Math.floor(Math.random() * (itemManager.items.length - 1));
+				return Math.floor(Math.random() * (itemManager.items.length - 2));
 			}
 			
 			public function initForFrontBelt(ellipseMove:EllipseMove):EllipseMove {
@@ -372,6 +399,7 @@
 					// Create the camera
 					var cam : Camera = Camera.getCamera();
 					cam.setMode(camW, camH, stage.frameRate);
+					cam.addEventListener(StatusEvent.STATUS, camStatusHandler);
 					
 					// Create a video
 					var vid : Video = new Video(camW, camH);
@@ -410,6 +438,20 @@
 					motionTrackerTimer.start();
 				}
 			}
+			
+			function camStatusHandler(event:StatusEvent) {
+				switch (event.code)
+				{
+					case "Camera.Muted":
+						//User clicked Deny
+						Alert.show("Trò chơi không thể bắt đầu vì bạn đã từ chối cho phép sử dụng webcam.");
+						break;
+					case "Camera.Unmuted":
+						//User clicked Accept
+						startCountDown();
+				}
+			}
+			
 			public function disableWebcamMode() {
 				motionTrackerTimer.stop();
 			}
@@ -517,7 +559,7 @@
 		<mx:Label id="time" text="00:00" styleName="time" textAlign="center" y="7" width="100%" height="100%"/>
 	</mx:Canvas>
 	
-	<mx:Image id="bowl" source="@Embed(source='assets/girls.png')" x="250" y="110"/>
+	<mx:Image id="bowl" source="@Embed(source='assets/girls.png')" x="190" y="0"/>
 	
 	<mx:Label id="score" x="320" y="260" width="100" styleName="score" text="0" textAlign="center" visible="false"/>
 	
@@ -526,7 +568,7 @@
 		<mx:Image id="fork" source="@Embed(source='assets/chopstick.png')" x="{GAME_PLAY_AREA_W/2}" y="{FORK_Y}"/>
 	</mx:Canvas>
 	
-	<mx:Image id="logo" source="@Embed(source='assets/logo1.png')" x="697" y="263"/>
+	<mx:Image id="logo" source="@Embed(source='assets/icon.png')" x="697" y="263"/>
 	
 	<local:NoCachingHttpService
 		id="httpGetHightScoreList"

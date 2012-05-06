@@ -49,20 +49,24 @@
 			function selectWebcam() {
 				Application.application.initWebcamMode();
 				PopUpManager.removePopUp(this);
-				Application.application.startCountDown();
+//				Application.application.startCountDown();
 			}
 		]]>
 	</mx:Script>
 	
+	<mx:Canvas id="hightscoreListLink" x="280" y="34" width="164" height="35" click="{hightscoreListLinkClicked()}" styleName="hightscoreListLink"
+			   useHandCursor="true"
+			   buttonMode="true"/>
+	
+	<mx:Canvas id="howToPlay" x="200" y="34" width="88" height="35" click="{howToPlayClicked()}" styleName="howToPlay"
+			   useHandCursor="true"
+			   buttonMode="true"/>
+	
 	<mx:Canvas id="gameRule" x="120" y="34" width="88" height="35" click="{gameRuleClicked()}" styleName="gameRuleActive"
 			   useHandCursor="true"
 			   buttonMode="true"/>
-	<mx:Canvas id="howToPlay" x="202" y="34" width="88" height="35" click="{howToPlayClicked()}" styleName="howToPlay"
-			   useHandCursor="true"
-			   buttonMode="true"/>
-	<mx:Canvas id="hightscoreListLink" x="284" y="34" width="164" height="35" click="{hightscoreListLinkClicked()}" styleName="hightscoreListLink"
-			   useHandCursor="true"
-			   buttonMode="true"/>
+	
+	
 	
 	<mx:Image id="btnStart" source="@Embed(source='assets/but_play.png')" x="520" y="50" 
 			  mouseOver="{glowImage.play([btnStart])}"
@@ -74,14 +78,12 @@
 				 paddingLeft="20" paddingBottom="20" paddingRight="20" paddingTop="20"/>
 	<mx:Canvas id="canvasHowToPlay" width="550" height="290" x="90" y="80" visible="false" 
 			   verticalScrollPolicy="off" horizontalScrollPolicy="off">
-		<mx:Image source="@Embed(source='assets/opt_motion.png')" x="20"/>
-		<mx:Image id="optMotion" source="@Embed(source='assets/sample.png')" y="177" x="10"
+		<mx:Image id="optMotion" source="@Embed(source='assets/opt_motion.png')"
 				  mouseOver="{glowImage.play([optMotion])}"
 				  mouseOut="{unglowImage.play([optMotion])}"
 				  useHandCursor="true"
 				  buttonMode="true"
 				  click="selectWebcam()"/>
-		<mx:Image source="@Embed(source='assets/arrows.png')" y="227" x="21"/>
 		<mx:Image id="optKey" source="@Embed(source='assets/opt_keys.png')" x="400" y="140" 
 				  mouseOver="{glowImage.play([optKey])}"
 				  mouseOut="{unglowImage.play([optKey])}"

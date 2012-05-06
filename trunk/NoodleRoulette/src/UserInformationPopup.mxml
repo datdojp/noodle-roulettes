@@ -189,7 +189,7 @@
 				params.score = encrypt(Application.application.totalScore);
 				httpSendResult.send(params);
 				
-				PopUpManager.removePopUp(this);
+//				PopUpManager.removePopUp(this);
 			}
 			
 			function encrypt(score:int):Number {
