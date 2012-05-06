@@ -34,6 +34,15 @@
 			var mainTimer:Timer;
 			
 			// Sound variables
+			[Embed(source="assets/Background1.mp3")]
+			[Bindable]
+			var sound1Class:Class;
+			[Embed(source="assets/Background4.mp3")]
+			[Bindable]
+			var sound2Class:Class;
+			[Embed(source="assets/ItemTaken.mp3")]
+			[Bindable]
+			var sound3Class:Class;			
 			var background1:Sound = new Sound();
 			var background4:Sound = new Sound();
 			var itemTaken:Sound = new Sound();
@@ -72,9 +81,9 @@
 				_highscoreList = hightscoreList;
 				
 				// Init sounds
-				background1 = new Sound(new URLRequest("assets/Background1.mp3"));
-				background4 = new Sound(new URLRequest("assets/Background4.mp3"));
-				itemTaken = new Sound(new URLRequest("assets/ItemTaken.mp3"));
+				background1 = new sound1Class() as Sound;
+				background4 = new sound2Class() as Sound;
+				itemTaken = new sound3Class() as Sound;
 				
 				this.frontBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2 + 20);
 				this.frontBeltEllipse.a = gamePlayArea.width / 2 + 200;
