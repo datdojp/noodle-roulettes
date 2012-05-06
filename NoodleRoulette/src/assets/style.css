@@ -65,10 +65,39 @@
 }
 .txtGameRule {
 	background-image:Embed(source='term_background.png');
-	fontFamily: Arial;
+	font-family: Arial;
 	font-style: italic;
 	font-size: 16;
 }
 
+.top5Highscore {
+	fontFamily: Arial;
+	font-weight: bold;
+	font-size: 16;
+	color: #fcf14d;
+	textAlign: center;
+}
+
+.highscoreScoreBackground {
+	background-image:Embed(source='score.png');
+}
+.highscoreScoreText3Digit {
+	fontFamily: Arial;
+	fontSize: 14;
+	color: red;
+	textAlign: center;
+}
+.highscoreScoreText4Digit {
+	fontFamily: Arial;
+	fontSize: 11;
+	color: red;
+	textAlign: center;
+}
+.highscoreFullname {
+	fontFamily: Arial;
+	fontSize: 14;
+	color: white;
+	textAlign: left;
+}
 
 
