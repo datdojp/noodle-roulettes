@@ -72,9 +72,9 @@
 				_highscoreList = hightscoreList;
 				
 				// Init sounds
-				background1 = new Sound(new URLRequest("assets/background1.mp3"));
-				background4 = new Sound(new URLRequest("assets/background4.mp3"));
-				itemTaken = new Sound(new URLRequest("assets/itemtaken.mp3"));
+				background1 = new Sound(new URLRequest("assets/Background1.mp3"));
+				background4 = new Sound(new URLRequest("assets/Background4.mp3"));
+				itemTaken = new Sound(new URLRequest("assets/ItemTaken.mp3"));
 				
 				this.frontBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2 + 20);
 				this.frontBeltEllipse.a = gamePlayArea.width / 2 + 200;
