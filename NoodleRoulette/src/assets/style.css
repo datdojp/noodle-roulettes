@@ -10,6 +10,10 @@
 	background-image:Embed(source='submit_background.jpg');
 }
 
+.backgroundTVC {
+	background-image:Embed(source='tvc.png');
+}
+
 .textbox1 {
 	background-image:Embed(source='textbox1.png');
 }
