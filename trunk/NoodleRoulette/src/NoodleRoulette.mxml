@@ -51,7 +51,7 @@
 			var background4Channel:SoundChannel;
 			var itemTakenChannel:SoundChannel;
 			
-			const TOTAL_TIME = 90 * 1000; //TODO
+			const TOTAL_TIME = 60 * 1000; //TODO
 			
 			const MAIN_TIMER_INTERVAL:int = 10;
 			const SPEED_CHANGE_AFTER:int = 3000;
@@ -168,7 +168,7 @@
 				mainTimer.start();
 				
 				// Play background sound
-				background1Channel = background1.play(0,30);
+				background1Channel = background1.play(0,3);
 			}
 			
 			public function stopGame() {
@@ -212,7 +212,7 @@
 				time.text = (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
 				
 				// Play other sound
-				if (remainingTime <= 30 * 1000 && background4Channel == null) {
+				if (remainingTime <= 20 * 1000 && background4Channel == null) {
 					background1Channel.stop();
 					background4Channel = background4.play(0,2);
 				}
@@ -338,7 +338,7 @@
 				var forkDownEffect:Move = new Move();
 				forkDownEffect.target = fork;
 				forkDownEffect.xBy = 0;
-				forkDownEffect.yBy = 160;
+				forkDownEffect.yBy = 170;
 				forkDownEffect.duration = 300;
 				forkDownEffect.addEventListener(EffectEvent.EFFECT_END,
 					function(event:EffectEvent) {
@@ -452,6 +452,7 @@
 			
 			var motionTracker:MotionTracker;
 			var motionTrackerTimer:Timer;
+			var lastMotionTrackerX:Number;
 			var lastMotionTrackerY:Number;
 			public function initWebcamMode() {
 				scoreMultipliedBy = 2;
@@ -472,6 +473,9 @@
 					// Create the Motion Tracker
 					motionTracker = new MotionTracker(vid);
 					
+					lastMotionTrackerX = -2 * camW;
+					lastMotionTrackerY = -camH;
+					
 					motionTrackerTimer = new Timer(20, 0);
 					motionTrackerTimer.addEventListener(TimerEvent.TIMER,
 						function(event:Event) {
@@ -484,22 +488,32 @@
 							var motionX:Number = motionTracker.motionArea.x + motionTracker.motionArea.width / 2;
 							var motionY:Number = motionTracker.motionArea.y + motionTracker.motionArea.height / 2;
 							
+							if (lastMotionTrackerX == -2 * camW) {
+								lastMotionTrackerX = motionX;
+							}
+							
+							if (lastMotionTrackerY == -camH) {
+								lastMotionTrackerY = motionY;
+							}
 							
 							// Move the target with some easing
 							moveEffectOfFork.stop();
-							moveEffectOfFork.xTo = forkContainer.width - motionX;
+							moveEffectOfFork.xTo = gamePlayArea.width - motionX;
 							moveEffectOfFork.yTo = FORK_Y;
 							moveEffectOfFork.play();
 //							if (Math.abs(gamePlayArea.y + gamePlayArea.height - motionY) < 100) {
 //								forkDown();
 //							}
 //							if (motionTracker.motionArea.y > camH * 1.5) {
-							if (motionY > 300) {
+							if ((motionY) > 350) {
 								forkDown();
 							}
 //							if (motionY > 330) {
 //								forkDown();
 //							}
+							
+							lastMotionTrackerX = motionX;
+							lastMotionTrackerY = motionY;
 						}
 					);
 					motionTrackerTimer.start();
@@ -659,4 +673,5 @@
 			   verticalScrollPolicy="off" horizontalScrollPolicy="off">
 		
 	</mx:Canvas>
+	<mx:Label id="debugLabel" x="745" y="28" text="Label" height="66"/>
 </mx:Application>

@@ -33,9 +33,9 @@ package uk.co.soulwire.cv
 		//	CONSTANTS
 		//	----------------------------------------------------------------
 
-		private static const DEFAULT_AREA : int = 10;
+		private static const DEFAULT_AREA : int = 6;
 		private static const DEFAULT_BLUR : int = 20;
-		private static const DEFAULT_BRIGHTNESS : int = 20;
+		private static const DEFAULT_BRIGHTNESS : int = -11;
 		private static const DEFAULT_CONTRAST : int = 150;
 
 		//	----------------------------------------------------------------
