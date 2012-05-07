@@ -43,6 +43,7 @@
 					Alert.show(result.error);
 					return;
 				} else {
+					Application.application.addHighscoreList();
 					Application.application.updateHighscoreList();
 					PopUpManager.removePopUp(this);
 				}

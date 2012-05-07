@@ -167,6 +167,9 @@
 				PopUpManager.addPopUp(intro, this, false);
 			}
 				
+			public function addHighscoreList() {
+				addChild(_highscoreList);
+			}
 			
 			public function updateHighscoreList() {
 				hightscoreList.removeAllChildren();
@@ -397,14 +400,6 @@
 						for (var i:int = 0; i < itemsInFrontBelt.length; i++) {
 							var item:Item = itemsInFrontBelt.getItemAt(i) as Item;
 							if (!item.isDisk && isCaught(item.image)) {
-								itemsInFrontBelt.removeItemAt( itemsInFrontBelt.getItemIndex(item) );
-								item.moveEffect.freeze();
-								if (gamePlayArea.getChildIndex(item.image) >= 0) {
-									gamePlayArea.removeChild(item.image);
-								}
-								addChild(item.image);
-								
-								moveEffectOfForkAndItem.targets = new Array(fork, item.image);
 								caughtItem = item;
 								break;
 							}
@@ -412,6 +407,29 @@
 						if (caughtItem != null) {
 							// Play sound
 							itemTaken.play();
+							
+							itemsInFrontBelt.removeItemAt( itemsInFrontBelt.getItemIndex(caughtItem) );
+							caughtItem.moveEffect.freeze();
+							if (gamePlayArea.getChildIndex(caughtItem.image) >= 0) {
+								gamePlayArea.removeChild(caughtItem.image);
+							}
+							forkContainer.addChild(caughtItem.image);
+							
+							forkLeft.x = fork.x;
+							forkLeft.y = fork.y;
+							forkLeft.visible = true;
+							forkRight.x = fork.x + forkLeft.width;
+							forkRight.y = fork.y;
+							forkRight.visible = true;
+							fork.visible = false;
+							
+							forkContainer.removeAllChildren();
+							forkContainer.addChild(forkRight);
+							forkContainer.addChild(caughtItem.image);
+							forkContainer.addChild(forkLeft);
+							forkContainer.addChild(fork);
+							
+							moveEffectOfForkAndItem.targets = new Array(fork, caughtItem.image, forkLeft, forkRight);
 							
 							moveEffectOfForkAndItem.xBy = ((bowl.x + bowl.width/2) - fork.width/2 - forkContainer.x) - fork.x + 20;
 							moveEffectOfForkAndItem.yBy = FORK_Y-fork.y;
@@ -422,6 +440,9 @@
 										return;
 									}
 									isMEOFAIEnded = true;
+									fork.visible = true;
+									forkLeft.visible = false;
+									forkRight.visible = false;
 									initCurrentMode();
 									var dropItemEffect:Move = new Move();
 									dropItemEffect.target = caughtItem.image;
@@ -743,6 +764,8 @@
 	<mx:Canvas id="forkContainer" x="{GAME_PLAY_AREA_X}" y="{GAME_PLAY_AREA_Y}" width="{GAME_PLAY_AREA_W}" height="{GAME_PLAY_AREA_H}"
 			   horizontalScrollPolicy="off" verticalScrollPolicy="off">
 		<mx:Image id="fork" source="@Embed(source='assets/chopstick.png')" x="{GAME_PLAY_AREA_W/2}" y="{FORK_Y}"/>
+		<mx:Image id="forkLeft" source="@Embed(source='assets/left_chopstick.png')" x="{GAME_PLAY_AREA_W/2-31}" y="{FORK_Y}" visible="false"/>
+		<mx:Image id="forkRight" source="@Embed(source='assets/right_chopstick.png')" x="{GAME_PLAY_AREA_W/2}" y="{FORK_Y}" visible="false"/>
 	</mx:Canvas>
 	
 	<mx:Image id="logo" source="@Embed(source='assets/icon.png')" x="697" y="263"/>
