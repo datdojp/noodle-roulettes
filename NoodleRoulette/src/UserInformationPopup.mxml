@@ -20,8 +20,7 @@
 					{label:"Đà Nẵng", data:3},
 					{label:"Nha Trang", data:4},
 					{label:"Hồ Chí Minh", data:5},
-					{label:"Cần Thơ", data:6},
-					{label:"Khác", data:7}
+					{label:"Cần Thơ", data:6}
 					 ]);
 			
 			const dobHint:String = "DD/MM/YYYY, ví dụ: 19/03/1986";
