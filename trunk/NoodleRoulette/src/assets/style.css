@@ -108,4 +108,11 @@
 	textAlign: left;
 }
 
+.agreeTerm {
+	fontFamily: Arial;
+	fontSize: 16;
+	fontStyle: bold;
+	color: white;
+}
+
 

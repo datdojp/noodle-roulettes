@@ -193,6 +193,12 @@
 					return false;
 				}
 				
+				//agree term
+				if (!agreeTerm.selected) {
+					Alert.show("Bạn phải đồng ý với mọi điều khoản của chương trình");
+					return false;
+				}
+				
 				return true;
 			}
 			
@@ -295,6 +301,7 @@
 		/>
 	<mx:Image source="@Embed(source='assets/but_ok.png')" x="554" y="291" click="onSendButtonClicked()"
 			  useHandCursor="true" buttonMode="true"/>
-	
+	<mx:CheckBox id="agreeTerm" label="Tôi đã đọc và đồng ý với mọi điều khoản chương trình"
+				 styleName="agreeTerm" x="165" y="310"/>
 	
 </mx:Canvas>
