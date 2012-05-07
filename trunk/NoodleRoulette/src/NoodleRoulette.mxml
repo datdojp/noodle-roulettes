@@ -15,6 +15,8 @@
 			import mx.controls.Alert;
 			import mx.controls.Image;
 			import mx.core.BitmapAsset;
+			import mx.core.MovieClipAsset;
+			import mx.core.MovieClipLoaderAsset;
 			import mx.core.UIComponent;
 			import mx.effects.Fade;
 			import mx.effects.Move;
@@ -58,6 +60,8 @@
 			var background4Channel:SoundChannel;
 			var itemTakenChannel:SoundChannel;
 			
+			var mv:MovieClip;
+			
 			// Bowl images
 			[Embed(source="assets/girls02.png")]
 			[Bindable]
@@ -85,9 +89,15 @@
 			
 			private var textEffectStr:String = "no";
 			
+			[Embed(source="assets/TVC.swf")]
+			[Bindable]
+			private var tvcClass:Class;
+			
+			var loader:Loader;
+			
 			const TOTAL_TIME = 60 * 1000; //TODO
 			
-			const MAIN_TIMER_INTERVAL:int = 10;
+			const MAIN_TIMER_INTERVAL:int = 50;
 			const SPEED_CHANGE_AFTER:int = 3000;
 			var mainTimerCounter:int = 0;
 			
@@ -201,6 +211,8 @@
 				mainTimer = new Timer(MAIN_TIMER_INTERVAL, 0);
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
+				
+				tvcImage.source = new tvcClass() as MovieClipAsset;
 				
 				// Play background sound
 				background1Channel = background1.play(0,10);
@@ -715,6 +727,9 @@
 	
 	<mx:Canvas id="gamePlayArea" x="{GAME_PLAY_AREA_X}" y="{GAME_PLAY_AREA_Y}" width="{GAME_PLAY_AREA_W}" height="{GAME_PLAY_AREA_H}" 
 			   horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		<mx:Canvas id="tvcBackground" styleName="backgroundTVC" width="179" height="106" x="10" y="10">
+			<mx:Image id="tvcImage" width="161" height="90" x="9" y="8" />
+		</mx:Canvas>
 	</mx:Canvas>
 	
 	<mx:Canvas id="clock" x="745" y="345" backgroundImage="@Embed(source='assets/clock.png')" width="98" height="46">
