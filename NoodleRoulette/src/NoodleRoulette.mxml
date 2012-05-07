@@ -7,15 +7,18 @@
 			import com.adobe.serialization.json.JSON;
 			
 			import flash.events.Event;
+			import flash.filters.BitmapFilter;
 			import flash.media.Sound;
 			import flash.net.URLRequest;
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.controls.Image;
+			import mx.core.BitmapAsset;
 			import mx.core.UIComponent;
 			import mx.effects.Fade;
 			import mx.effects.Move;
+			import mx.effects.easing.*;
 			import mx.events.EffectEvent;
 			import mx.managers.PopUpManager;
 			import mx.rpc.events.ResultEvent;
@@ -43,13 +46,44 @@
 			var sound2Class:Class;
 			[Embed(source="assets/ItemTaken.mp3")]
 			[Bindable]
-			var sound3Class:Class;			
+			var sound3Class:Class;	
+			[Embed(source="assets/Clap.mp3")]
+			[Bindable]
+			var sound4Class:Class;	
 			var background1:Sound = new Sound();
 			var background4:Sound = new Sound();
 			var itemTaken:Sound = new Sound();
+			var clap:Sound = new Sound();
 			var background1Channel:SoundChannel;
 			var background4Channel:SoundChannel;
 			var itemTakenChannel:SoundChannel;
+			
+			// Bowl images
+			[Embed(source="assets/girls02.png")]
+			[Bindable]
+			private var girl02ImgCls:Class;
+			[Embed(source="assets/girls03.png")]
+			[Bindable]
+			private var girl03ImgCls:Class;
+			[Embed(source="assets/girls04.png")]
+			[Bindable]
+			private var girl04ImgCls:Class;
+			
+			// Text images
+			[Embed(source="assets/good.png")]
+			[Bindable]
+			private var text01ImgCls:Class;
+			[Embed(source="assets/great.png")]
+			[Bindable]
+			private var text02ImgCls:Class;
+			[Embed(source="assets/intelligent.png")]
+			[Bindable]
+			private var text03ImgCls:Class;
+			[Embed(source="assets/incredible.png")]
+			[Bindable]
+			private var text04ImgCls:Class;
+			
+			private var textEffectStr:String = "no";
 			
 			const TOTAL_TIME = 60 * 1000; //TODO
 			
@@ -93,6 +127,7 @@
 				background1 = new sound1Class() as Sound;
 				background4 = new sound2Class() as Sound;
 				itemTaken = new sound3Class() as Sound;
+				clap = new sound4Class() as Sound;
 				
 				this.frontBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2 + 20);
 				this.frontBeltEllipse.a = gamePlayArea.width / 2 + 200;
@@ -168,7 +203,7 @@
 				mainTimer.start();
 				
 				// Play background sound
-				background1Channel = background1.play(0,3);
+				background1Channel = background1.play(0,10);
 			}
 			
 			public function stopGame() {
@@ -195,10 +230,12 @@
 				if (remainingTime <= 0) {
 					stopGame();
 					finishBackground.visible = true;
+					resultScore.visible = true;
 					var temp:Timer = new Timer(3000, 1);
 					temp.addEventListener(TimerEvent.TIMER,
 						function(event:Event) {
 							finishBackground.visible = false;
+							resultScore.visible = false;
 							var userInformationPopup:UserInformationPopup = new UserInformationPopup();
 							userInformationPopup.addChild(_highscoreList);
 							PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
@@ -212,7 +249,7 @@
 				time.text = (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
 				
 				// Play other sound
-				if (remainingTime <= 20 * 1000 && background4Channel == null) {
+				if (remainingTime <= 15 * 1000 && background4Channel == null) {
 					background1Channel.stop();
 					background4Channel = background4.play(0,2);
 				}
@@ -390,7 +427,49 @@
 													caughtItem.moveEffect.unfreeze();
 													totalScore += caughtItem.score * scoreMultipliedBy;
 													score.text = totalScore.toString();
+													resultScore.text = totalScore.toString();
 													caughtItem = null;
+													
+													// Change bowl's image and Text effect
+													if (totalScore >= 2000 && textEffectStr != "incredible") {
+														bowl.source = new girl04ImgCls() as BitmapAsset;
+														textEffectStr = "incredible";
+														imgText.source = new text04ImgCls() as BitmapAsset;
+														imgText.x = (forkContainer.width - 225) / 2;
+														imgText.y = 150;
+														zoomTextIn.play([imgText]);
+														clap.play();
+													}
+													else if (totalScore < 2000 && totalScore >= 1500 && textEffectStr != "intelligent") {
+														bowl.source = new girl03ImgCls() as BitmapAsset;
+														textEffectStr = "intelligent";
+														imgText.source = new text03ImgCls() as BitmapAsset;
+														imgText.x = (forkContainer.width - 240) / 2;
+														imgText.y = 150;
+														zoomTextIn.play([imgText]);
+														clap.play();
+													}
+													else if (totalScore < 1500 && totalScore >= 1000 && textEffectStr != "great") {
+														bowl.source = new girl03ImgCls() as BitmapAsset;
+														textEffectStr = "great";
+														imgText.source = new text02ImgCls() as BitmapAsset;
+														imgText.x = (forkContainer.width - 150) / 2;
+														imgText.y = 150;
+														zoomTextIn.play([imgText]);
+														clap.play();
+													}
+													else if (totalScore < 1000 && totalScore >= 500 && textEffectStr != "good") {
+														bowl.source = new girl02ImgCls() as BitmapAsset;
+														textEffectStr = "good";
+														imgText.source = new text01ImgCls() as BitmapAsset;
+														imgText.x = (forkContainer.width - 148) / 2;
+														imgText.y = 150;
+														zoomTextIn.play([imgText]);
+														clap.play();
+													}
+													else if (totalScore < 1000 && totalScore >= 100 && textEffectStr != "good") {
+														bowl.source = new girl02ImgCls() as BitmapAsset;
+													}
 												}
 											);
 											
@@ -505,7 +584,7 @@
 //								forkDown();
 //							}
 //							if (motionTracker.motionArea.y > camH * 1.5) {
-							if ((motionY) > 350) {
+							if ((motionY) > 300) {
 								forkDown();
 							}
 //							if (motionY > 330) {
@@ -665,9 +744,36 @@
 			  x="300" y="200"
 			  textAlign="center"/>
 	
+	<mx:Image id="imgText" />
+	
 	<mx:Zoom id="zoomIn" zoomWidthFrom="0" zoomWidthTo="1" zoomHeightFrom="0" zoomHeightTo="1" duration="300"/>
+	
+	<mx:Zoom id="zoomTextIn" zoomWidthFrom="0" zoomWidthTo="1" zoomHeightFrom="0" zoomHeightTo="1" easingFunction="{Bounce.easeOut}" duration="2000">
+		<mx:effectEnd>
+			<![CDATA[
+				zoomTextOut.play([imgText]);
+			]]>
+		</mx:effectEnd>
+	</mx:Zoom>
+
+	<mx:Zoom id="zoomTextOut" zoomWidthFrom="1" zoomWidthTo="0" zoomHeightFrom="1" zoomHeightTo="0" easingFunction="{Bounce.easeIn}" duration="2000">
+		<mx:effectEnd>
+			<![CDATA[
+				imgText.source = undefined;
+			]]>
+		</mx:effectEnd>
+	</mx:Zoom>
 
 	<mx:Canvas id="finishBackground" styleName="backgroundFinish" width="100%" height="100%" visible="false"/>
+	<mx:Label id="resultScore" styleName="resultScore" visible="false" textAlign="left"  x="431" y="218">
+		<mx:filters>
+			<mx:GlowFilter>
+				<mx:inner>False</mx:inner>
+				<mx:color>0xf6c633</mx:color>
+				<mx:strength>3</mx:strength>
+			</mx:GlowFilter>
+		</mx:filters>
+	</mx:Label>
 	
 	<mx:Canvas id="hightscoreList" x="772" y="102" width="165" height="200"
 			   verticalScrollPolicy="off" horizontalScrollPolicy="off">
