@@ -83,39 +83,112 @@
 				}
 			}
 			
+			function isDigitString(input:String):Boolean {
+				if (input == null || input.length == 0) {
+					return false;
+				}
+				
+				for(var i = 0; i < input.length; i++) {
+					var temp:Number = parseInt(input.substr(i, 1));
+					if (isNaN(temp)) {
+						return false;
+					}
+				}
+				
+				return true;
+			}
+			
+			function isDDMMYYYY(input:String):Boolean {
+				if (input == null || input.length == 0) return false;
+				
+				var splitted:Array = input.split("/");
+				if (splitted.length != 3) return false;
+				
+				if (splitted[0].length != 2 || splitted[1].length != 2 || splitted[2].length != 4) return false;
+				
+				if (!isDigitString(splitted[0]) || !isDigitString(splitted[1]) || !isDigitString(splitted[2])) return false;
+				
+				var dd = parseInt(splitted[0]);
+				var mm = parseInt(splitted[1]);
+				var yyyy = parseInt(splitted[2]);
+				
+				var date:Date = new Date(yyyy, mm, dd);
+				if (date == null) return false;
+				
+				return true;
+			}
+			
+			function isEmail(input:String):Boolean {
+				var pattern:RegExp = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+				return pattern.test(input.toLowerCase());
+			}
+			
 			function validate():Boolean {
+				//name
 				if(isEmpty(txtName.text)) {
 					alertMissingField("Họ và tên");
 					txtName.setFocus();
 					return false;
 				}
+				
+				//CMND
 				if (isEmpty(idCarNo.text)) {
 					alertMissingField("CMND");
 					idCarNo.setFocus();
 					return false;
 				}
+				if (!isDigitString(idCarNo.text)) {
+					Alert.show("CMND phải là chuỗi số 0-9");
+					idCarNo.setFocus();
+					return false;
+				}
+				
+				//dob
 				if (isEmpty(dob.text) || dob.text == dobHint) {
 					alertMissingField("Ngày sinh");
 					dob.setFocus();
 					return false;
 				}
+				if (!isDDMMYYYY(dob.text)) {
+					Alert.show("Ngày sinh không đúng định dạng");
+					dob.setFocus();
+					return false;
+				}
+				
+				//phone
 				if (isEmpty(phone.text)) {
 					alertMissingField("Điện thoại");
 					phone.setFocus();
 					return false;
 				}
+				if (!isDigitString(phone.text)) {
+					Alert.show("Số điện thoại phải là chuỗi số 0-9");
+					phone.setFocus();
+					return false;
+				}
+				
+				//address
 				if (isEmpty(address.text)) {
 					alertMissingField("Địa chỉ");
 					address.setFocus();
 					return false;
 				}
+				
+				//city
 				if (cities.selectedItem.data == 0) {
 					alertMissingField("Thành phố");
 					cities.setFocus();
 					return false;
 				}
+				
+				//email
 				if (isEmpty(email.text)) {
 					alertMissingField("Email");
+					email.setFocus();
+					return false;
+				}
+				if (!isEmail(email.text)) {
+					Alert.show('Email không đúng định dạng');
 					email.setFocus();
 					return false;
 				}
@@ -161,6 +234,8 @@
 				params.fullname = txtName.text;
 				httpGetUserInfo.send(params);
 			}
+			
+		
 		]]>
 	</mx:Script>
 	<mx:Canvas styleName="textbox1" x="265" y="119" width="298" height="30">
@@ -220,4 +295,6 @@
 		/>
 	<mx:Image source="@Embed(source='assets/but_ok.png')" x="554" y="291" click="onSendButtonClicked()"
 			  useHandCursor="true" buttonMode="true"/>
+	
+	
 </mx:Canvas>
