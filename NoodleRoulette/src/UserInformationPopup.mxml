@@ -52,10 +52,19 @@
 				var JSONResArr:String = String(httpGetUserInfo.lastResult);
 				if (JSONResArr != null && JSONResArr.length > 0) {
 					var result:Object = JSON.decode(JSONResArr);
-					if (result.error != null) return;
+					if (result.error != null) {
+						idCarNo.text = "";
+						phone.text = "";
+						address.text = "";
+						dob.text = dobHint;
+						cities.selectedIndex = 0;
+						email.text = "";
+						return;	
+					}
 					idCarNo.text = result[0].cmnd;
 					phone.text = result[0].phone;
 					address.text = result[0].address;
+					dob.text = result[0].dob;
 					for (var i = 0; i < citiesData.length; i++) {
 						if (citiesData.getItemAt(i).label == result[0].city) {
 							cities.selectedIndex = i;
@@ -64,7 +73,14 @@
 					}
 					email.text = result[0].email;
 				}
-				
+				else {
+					idCarNo.text = "";
+					phone.text = "";
+					address.text = "";
+					dob.text = dobHint;
+					cities.selectedIndex = 0;
+					email.text = "";
+				}
 			}
 			
 			function validate():Boolean {

@@ -673,5 +673,4 @@
 			   verticalScrollPolicy="off" horizontalScrollPolicy="off">
 		
 	</mx:Canvas>
-	<mx:Label id="debugLabel" x="745" y="28" text="Label" height="66"/>
 </mx:Application>
