@@ -457,8 +457,8 @@
 				scoreMultipliedBy = 2;
 				controlMode = CONTROL_MODE_WEBCAM;
 				if (motionTracker == null && motionTrackerTimer == null) {
-					var camW : int = gamePlayArea.width;
-					var camH : int = gamePlayArea.height;
+					var camW : int = GAME_PLAY_AREA_W;
+					var camH : int = GAME_PLAY_AREA_H;
 					
 					// Create the camera
 					var cam : Camera = Camera.getCamera();
@@ -472,8 +472,7 @@
 					// Create the Motion Tracker
 					motionTracker = new MotionTracker(vid);
 					
-					motionTrackerTimer = new Timer(100, 0);
-					var lastMotionY;
+					motionTrackerTimer = new Timer(20, 0);
 					motionTrackerTimer.addEventListener(TimerEvent.TIMER,
 						function(event:Event) {
 							// Tell the MotionTracker to update itself
@@ -485,7 +484,6 @@
 							var motionX:Number = motionTracker.motionArea.x + motionTracker.motionArea.width / 2;
 							var motionY:Number = motionTracker.motionArea.y + motionTracker.motionArea.height / 2;
 							
-							if (lastMotionY == 0)lastMotionY = motionY;
 							
 							// Move the target with some easing
 							moveEffectOfFork.stop();
@@ -495,11 +493,12 @@
 //							if (Math.abs(gamePlayArea.y + gamePlayArea.height - motionY) < 100) {
 //								forkDown();
 //							}
-							if (motionY > 300) {
+							if (motionTracker.motionArea.y > camH * 1.5) {
 								forkDown();
 							}
-							
-							lastMotionY = motionY;
+//							if (motionY > 330) {
+//								forkDown();
+//							}
 						}
 					);
 					motionTrackerTimer.start();
