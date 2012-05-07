@@ -48,16 +48,16 @@
 	font-size: 300pt;
 }
 
-.gameRule {
+.howToPlay {
 	background-image:Embed(source='but_help.png');
 }
-.gameRuleActive {
+.howToPlayActive {
 	background-image:Embed(source='but_help_hl.png');
 }
-.howToPlay {
+.gameRule {
 	background-image:Embed(source='but_term.png');
 }
-.howToPlayActive {
+.gameRuleActive {
 	background-image:Embed(source='but_term_hl.png');
 }
 .hightscoreListLink {
