@@ -493,7 +493,8 @@
 //							if (Math.abs(gamePlayArea.y + gamePlayArea.height - motionY) < 100) {
 //								forkDown();
 //							}
-							if (motionTracker.motionArea.y > camH * 1.5) {
+//							if (motionTracker.motionArea.y > camH * 1.5) {
+							if (motionY > 300) {
 								forkDown();
 							}
 //							if (motionY > 330) {
