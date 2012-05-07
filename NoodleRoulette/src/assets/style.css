@@ -65,9 +65,10 @@
 }
 .txtGameRule {
 	background-image:Embed(source='term_background.png');
+	background-color: undefined;
 	font-family: Arial;
 	font-style: italic;
-	font-size: 16;
+	font-size: 14;
 }
 
 .top5Highscore {

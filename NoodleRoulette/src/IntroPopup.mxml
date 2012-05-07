@@ -7,7 +7,64 @@
 			import mx.core.Application;
 			import mx.managers.PopUpManager;
 			function init() {
-				txtGameRule.text = "Bộ trưởng Khoa học và Công nghệ là khách mời thứ 12 tham gia chương trình Dân hỏi - Bộ trưởng trả lời trên cổng thông tin Chính phủ, theo chỉ đạo của Thủ tướng từ đầu tháng 3 tới nay. Tại buổi đối thoại trực tuyến với nhân dân hôm nay, Bộ trưởng dành hơn 2 tiếng trả lời về nhiều vấn đề quan trọng của ngành như cơ chế ưu đãi nhà khoa học, tái cơ cấu, đổi mới mô hình quản lý khoa học và công nghệ, cây trồng biến đổi gene, lĩnh vực sở hữu trí tuệ, chất lượng mũ bảo hiểm và đặc biệt là câu chuyện điện hạt nhân, cháy nổ xe cơ giới thời gian qua.\nGood data validation for URLs can mean different things depending on the usage of the URL within the overall application. The most common data validation techniques include validating that the URL is of the appropriate scheme. For instance, unintentionally allowing javascript: URLs may result in cross-site scripting. Validating that the URL is a within your domain can ensure that the SWF file can't be used as an open-redirector by people who conduct phishing attacks. For additional security, you may also choose to validate the path of the URL and to validate that the URL conforms to the RFC guidelines\nFor example, the following code shows a simple example of performing data validation by denying any URL that does not begin with http:// or https:// and validating that the URL is within your domain name. This example may not be appropriate for all web applications and you should consider whether additional checks against the URL are necessary.";	
+				txtGameRule.htmlText =
+					"Bạn có biết game Motion tracking?<br />" +
+					"Bạn có muốn thử game này không?<br />" +
+					"Nếu có, bạn hãy đến với chương trình “Chế biến mì dai – Nhận ngay ipad” của nhãn hàng Mì 3 miền Gold để có cơ hội trải nghiệm game mới lạ, thú vị cũng như có cơ hội nhận những giải thưởng có giá trị.<br />" +
+					"<strong><u>I. Điều kiện tham gia:</u></strong><br />" +
+					"<ul><li>Tất cả mọi người đang sinh sống, làm việc tại 6 thành phố lớn: thủ đô Hà Nội, thành phố Hải Phòng, Đà Nẵng, Nha Trang, Hồ Chí Minh, Cần Thơ.</li>" +
+					"<li>Bạn chỉ cần đăng kí chơi game để thuận tiện cho việc trao quà về sau khi thắng cuộc, người chơi chỉ cần điền đầy đủ thông tin sau:<br />" +
+					"Họ tên:         <br />" +
+					"Năm sinh	 Điện thoại liên lạc:<br />" +
+					"Địa chỉ:                Quận(huyện):                Tỉnh thành:<br />" +
+					"Email:                                               <br />" +
+					"Tôi đã đọc và đồng ý với mọi điều khoản chương trình.<br />" +
+					"<strong>Hoàn tất</strong>" +
+					"</li></ul><br />" +
+					"<strong><u>II. Thời gian và nội dung chương trình:</u></strong><br />" +
+					"Cuộc thi sẽ được diễn ra trong 2 vòng.<br />" +
+					"<ul>" +
+					"<li><strong>Vòng thi ngày:</strong> diễn ra hàng ngày từ 07/05/2012 – 03/06/2012</li>" +
+					"<li><strong>Vòng thi tuần:</strong> diễn ra vào cuối mỗi tuần (các ngày 13/05, 20/05, 27/05, 03/06)</li>" +
+					"<li><strong>Vòng thi đặc biệt:</strong> cuối chương trình : ngày 04/06/2012</li>" +
+					"<strong>1. Vòng thi ngày:</strong><br />" +
+					"<strong>	Cách thức tham gia:</strong><br />" +
+					"- Bước 1: Người tham gia sẽ đăng kí thông tin để chơi trò chơi.<br />" +
+					"- Bước 2: Người tham gia có thể lựa chọn 1 trong 2 hình thức chơi game như sau:<br />" +
+					"+ Chơi game bằng webcam:  dựa vào cử động của tay thông qua webcam.<br />" +
+					"+ Với các trường hợp người tham gia không có webcam thì có thể sử dụng các phím Arrow.<br />" +
+					"- Bước 3: Mỗi người tham gia sẽ có 1phút 30s cho phần chơi của mình. Sau khi kết thúc, số điểm của người tham gia sẽ được hiện lên “High Score” nằm bên phải màn hình. Đồng thời, Admin sẽ gửi email cho người tham gia thông báo số điểm đạt được.<br />" +
+					"<strong>	Cách chấm điểm:</strong><br />" +
+					"- Mỗi ngày, người tham gia sẽ được chơi game trong nhiều lần nhưng chỉ tính điểm 01 lần là điểm cao nhất trong ngày. Người tham gia được chơi nhiều lần trong các ngày khác và được tính điểm cao nhất.<br />" +
+					"- Nếu lượt chơi trong ngày của người tham gia nằm trong Top 20 người có số điểm cao nhất thì người tham gia sẽ trở thành người thắng cuộc.<br />" +
+					"- Người thắng cuộc trong cuộc thi ngày thì vẫn có thể tiếp tục chơi để thi vòng thi đặc biệt nhưng không được tính cho cuộc thi ngày của các ngày khác dù số điểm của người chơi đó cao nhất trong các ngày khác.<br />" +
+					"<strong>	Cơ cấu giải thưởng:</strong><br />" +
+					"- Hàng ngày, sẽ có 20 giải thưởng giành cho 20 người chơi có điểm số cao nhất.<br />" +
+					"- Phần thưởng là 10 gói mì Reeva 3 miền Gold thơm ngon.<br />" +
+					"<strong>2. Vòng thi tuần:</strong><br />" +
+					"<strong>	Cách thức và nội dung thi:</strong><br />" +
+					"- Tất cả người chơi đều được tham gia vào vòng thi này (bao gồm những người đã trúng giải thưởng ngày).<br />" +
+					"- Người tham gia có số điểm cao nhất (thông qua Highscore) trong 01 tuần (điểm của người chơi không được cộng dồn mà chỉ tính điểm cao nhất trong các lần chơi) thì người tham gia sẽ có cơ hội là người chiến thắng cuộc thi tuần<br />" +
+					"<strong>	Cơ cấu giải thưởng:</strong><br />" +
+					"- Mỗi tuần sẽ có 10 giải thưởng giành cho 10 bạn có điểm số cao nhất<br />" +
+					"- Phần thưởng: 06 tháng ăn mì miễn phí tương đương với 04 thùng mì Reeva 3 miền Gold thơm ngon.<br />" +
+					"<strong>3. Vòng thi đặc biệt:</strong><br />" +
+					"<strong>	Cách thức và nội dung thi:</strong><br />" +
+					"- Tất cả người chơi đều được tham gia vào vòng thi này (bao gồm những người đã trúng giải thưởng ngày).<br />" +
+					"- Người tham gia có điểm tích lũy hàng ngày cao nhất (thông qua Highscore) trong suốt thời gian diễn ra chương trình (điểm của người chơi không được cộng dồn mà chỉ tính điểm cao nhất trong các lần chơi) thì người tham gia sẽ có cơ hội là người thắng cuộc vòng thi đặc biệt<br />" +
+					"<strong>	Cơ cấu giải thưởng:</strong><br />" +
+					"-  01 Apple  IPad 3 – 64 GB trị giá 16.000.000 VNĐ<br />" +
+					"<strong><u>III. Thời gian kết thúc tính đềm – Thời gian công bố kết quả:</u></strong><br />" +
+					"<strong>1. Thời gian kết thúc tính điểm:</strong><br />" +
+					"- Hàng ngày: kết thúc vào 21h00<br />" +
+					"- Hàng tuần: kết thúc vào 21h00 ngày cuối tuần<br />" +
+					"- Đặc biệt: kết thúc vào 21h00 ngày 03/06/2012<br />" +
+					"<strong>2. Thời gian công bố kết quả:</strong><br />" +
+					"- 9h sáng ngày hôm sau (sau ngày kết thúc tính điểm)<br />" +
+					"<strong><u>IV. Hình thức trao giải thưởng:</u></strong><br />" +
+					"- Các phần quà sẽ được gửi đến người tham gia thông qua bưu điện theo địa chỉ và số điện thoại cung cấp tại mẫu đơn tham gia trong thời gian sớm nhất.<br />" +
+					"- Lưu ý, mỗi người chơi chỉ nhận được quà 1 lần theo địa chỉ đã cung cấp trong mẫu đơn tham gia cho vòng thi ngày nhưng được sử dụng cho các vòng thi khác.<br />" +
+					"<strong><em>* Quyết định của Ban Tổ Chức sẽ là quyết định cuối cùng.</em></strong>";
 			}
 			
 			function gameRuleClicked() {
@@ -22,7 +79,7 @@
 				canvasHowToPlay.visible = true;
 			}
 			function hightscoreListLinkClicked() {
-				navigateToURL( new URLRequest( "http://google.com.vn" ), "_blank" );
+				navigateToURL( new URLRequest( "http://viethungfood.com/" ), "_blank" );
 			}
 			
 			function makeAllInactive() {
@@ -75,7 +132,7 @@
 			  useHandCursor="true"
 			  buttonMode="true"/>
 	<mx:TextArea id="txtGameRule" styleName="txtGameRule" editable="false" width="486" height="266" x="90" y="80"
-				 paddingLeft="20" paddingBottom="20" paddingRight="20" paddingTop="20"/>
+				 paddingLeft="20" paddingBottom="20" paddingRight="20" paddingTop="20" fontStyle="normal" backgroundAlpha="1.0" alpha="1.0" wordWrap="true"/>
 	<mx:Canvas id="canvasHowToPlay" width="550" height="290" x="90" y="80" visible="false" 
 			   verticalScrollPolicy="off" horizontalScrollPolicy="off">
 		<mx:Image id="optMotion" source="@Embed(source='assets/opt_motion.png')"

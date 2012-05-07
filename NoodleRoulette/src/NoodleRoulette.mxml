@@ -51,7 +51,7 @@
 			var background4Channel:SoundChannel;
 			var itemTakenChannel:SoundChannel;
 			
-			const TOTAL_TIME = 40 * 1000; //TODO
+			const TOTAL_TIME = 90 * 1000; //TODO
 			
 			const MAIN_TIMER_INTERVAL:int = 10;
 			const SPEED_CHANGE_AFTER:int = 3000;
@@ -62,9 +62,9 @@
 			const GAME_PLAY_AREA_W:int = 704;
 			const GAME_PLAY_AREA_H:int = 383;
 			
-			const FORK_Y:int = -195;
-			const FORK_CATCHABLE_AREA_X = 18;
-			const FORK_CATCHABLE_AREA_W = 44 - 18;
+			const FORK_Y:int = 0;
+			const FORK_CATCHABLE_AREA_X = 14;
+			const FORK_CATCHABLE_AREA_W = 20;
 			
 			const N_GIFTS = 3;
 			var giftTimes:Array;
@@ -338,7 +338,7 @@
 				var forkDownEffect:Move = new Move();
 				forkDownEffect.target = fork;
 				forkDownEffect.xBy = 0;
-				forkDownEffect.yBy = 200;
+				forkDownEffect.yBy = 160;
 				forkDownEffect.duration = 300;
 				forkDownEffect.addEventListener(EffectEvent.EFFECT_END,
 					function(event:EffectEvent) {
@@ -364,7 +364,7 @@
 							// Play sound
 							itemTaken.play();
 							
-							moveEffectOfForkAndItem.xBy = ((bowl.x + bowl.width/2) - fork.width/2 - forkContainer.x) - fork.x + 110;
+							moveEffectOfForkAndItem.xBy = ((bowl.x + bowl.width/2) - fork.width/2 - forkContainer.x) - fork.x + 20;
 							moveEffectOfForkAndItem.yBy = FORK_Y-fork.y;
 							var isMEOFAIEnded:Boolean = false;
 							moveEffectOfForkAndItem.addEventListener(EffectEvent.EFFECT_END,
@@ -377,7 +377,7 @@
 									var dropItemEffect:Move = new Move();
 									dropItemEffect.target = caughtItem.image;
 									dropItemEffect.duration = 500;
-									dropItemEffect.yBy = 100;
+									dropItemEffect.yBy = 50;
 									dropItemEffect.addEventListener(EffectEvent.EFFECT_END,
 										function(event:Event) {
 											var disappear:Fade = new Fade();
@@ -628,7 +628,7 @@
 		<mx:Label id="time" text="00:00" styleName="time" textAlign="center" y="7" width="100%" height="100%"/>
 	</mx:Canvas>
 	
-	<mx:Image id="bowl" source="@Embed(source='assets/girls.png')" x="190" y="0"/>
+	<mx:Image id="bowl" source="@Embed(source='assets/girls.png')" x="190" y="15"/>
 	
 	<mx:Label id="score" x="320" y="260" width="100" styleName="score" text="0" textAlign="center" visible="false"/>
 	
