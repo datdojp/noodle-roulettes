@@ -48,6 +48,13 @@
 	font-size: 300pt;
 }
 
+.resultScore {
+	font-family: Arial;
+	color: #ff0000;
+	font-size: 30pt;
+	font-weight: bold;
+}
+
 .howToPlay {
 	background-image:Embed(source='but_help.png');
 }
