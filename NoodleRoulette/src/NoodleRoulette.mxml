@@ -147,8 +147,8 @@
 				
 				displayIntroPopup();
 				
-				var userInformationPopup:UserInformationPopup = new UserInformationPopup();
-				PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
+//				var userInformationPopup:UserInformationPopup = new UserInformationPopup();
+//				PopUpManager.addPopUp(userInformationPopup, Application.application as NoodleRoulette, false);
 			}
 			
 			public function displayIntroPopup() {
