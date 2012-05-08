@@ -475,11 +475,11 @@
 																double = true;
 																
 																txtCountDown.visible = true;
-																txtCountDown.text = "x2";
+																txtCountDown.text = "bonus x2";
 																txtCountDown.styleName = "doubleScore";
 																txtCountDown.x = 420;
 																txtCountDown.y = 260;
-																effectScore.color = 0x0000FF;
+																effectScore.color = 0x32CFFF;
 																effectScore.play([txtCountDown]);
 																
 																inLineItems = new Array();
