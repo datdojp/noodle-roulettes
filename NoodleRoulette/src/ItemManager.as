@@ -37,12 +37,27 @@ package
 		[Bindable]
 		private var cupImgCls:Class;
 		
+		[Embed(source="assets/item09.png")]
+		[Bindable]
+		private var item09ImgCls:Class;
+
+		[Embed(source="assets/item10.png")]
+		[Bindable]
+		private var item10ImgCls:Class;
+
+		[Embed(source="assets/item11.png")]
+		[Bindable]
+		private var item11ImgCls:Class;
+
 		private var TEMPLATE_ITEMS:Array = new Array(
 			(new Item()).init(40, 80, -1, item01ImgCls),
 			(new Item()).init(30, 80, -1, item02ImgCls),
 			(new Item()).init(20, 80, -1, item03ImgCls),
 			(new Item()).init(15, 80, -1, item04ImgCls),
 			(new Item()).init(10, 80, -1, item05ImgCls),
+			(new Item()).init(-50, 80, -1, item09ImgCls),
+			(new Item()).init(-50, 80, -1, item10ImgCls),
+			(new Item()).init(-50, 80, -1, item11ImgCls),
 			(new Item()).init(5, 80, -1, cupImgCls),
 			(new Item()).init(500, 80, -1, item06ImgCls, true),
 			(new Item()).init(0, 90, -1, diskImgCls, false, true)
@@ -57,6 +72,16 @@ package
 //				anArray.addItem(TEMPLATE_ITEMS[i]);
 				items.addItem(anArray);	
 			}
+		}
+		
+		public function findIndex(item:Item) {
+			for (var i:int = 0; i < TEMPLATE_ITEMS.length; i++) {
+				if ((TEMPLATE_ITEMS[i] as Item).imgClass == item.imgClass) {
+					return i;
+				}
+			}
+			
+			return -1;
 		}
 		
 		public function allocateItem(idx:int):Item {

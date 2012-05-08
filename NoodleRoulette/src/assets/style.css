@@ -36,8 +36,24 @@
 }
 .score {
 	font-family: digitFont;
-	color: red;
+	color: yellow;
 	font-size: 50;
+}
+
+.plusScore {
+	font-family: digitFont;
+	color: green;
+	font-size: 40;
+}
+.minusScore {
+	font-family: digitFont;
+	color: red;
+	font-size: 40;
+}
+.doubleScore {
+	font-family: digitFont;
+	color: blue;
+	font-size: 40;
 }
 
 .time {

@@ -40,28 +40,26 @@
 			var mainTimer:Timer;
 			
 			// Sound variables
-			[Embed(source="assets/Background1.mp3")]
-			[Bindable]
-			var sound1Class:Class;
-			[Embed(source="assets/Background4.mp3")]
-			[Bindable]
-			var sound2Class:Class;
-			[Embed(source="assets/ItemTaken.mp3")]
-			[Bindable]
-			var sound3Class:Class;	
-			[Embed(source="assets/Clap.mp3")]
-			[Bindable]
-			var sound4Class:Class;	
-			var background1:Sound = new Sound();
-			var background4:Sound = new Sound();
-			var itemTaken:Sound = new Sound();
-			var clap:Sound = new Sound();
-			var background1Channel:SoundChannel;
-			var background4Channel:SoundChannel;
-			var itemTakenChannel:SoundChannel;
-			
-			var mv:MovieClip;
-			
+//			[Embed(source="assets/Background1.mp3")]
+//			[Bindable]
+//			var sound1Class:Class;
+//			[Embed(source="assets/Background4.mp3")]
+//			[Bindable]
+//			var sound2Class:Class;
+//			[Embed(source="assets/ItemTaken.mp3")]
+//			[Bindable]
+//			var sound3Class:Class;	
+//			[Embed(source="assets/Clap.mp3")]
+//			[Bindable]
+//			var sound4Class:Class;	
+//			var background1:Sound = new Sound();
+//			var background4:Sound = new Sound();
+//			var itemTaken:Sound = new Sound();
+//			var clap:Sound = new Sound();
+//			var background1Channel:SoundChannel;
+//			var background4Channel:SoundChannel;
+//			var itemTakenChannel:SoundChannel;
+						
 			// Bowl images
 			[Embed(source="assets/girls02.png")]
 			[Bindable]
@@ -89,7 +87,9 @@
 			
 			private var textEffectStr:String = "no";
 			
-			var loader:Loader;
+			[Embed(source="assets/TVC.swf")]
+			[Bindable]
+			var tvcClass:Class;	
 			
 			const TOTAL_TIME = 60 * 1000; //TODO
 			
@@ -109,8 +109,10 @@
 			const N_GIFTS = 3;
 			var giftTimes:Array;
 			
-			const N_EMPTY_DISK = Math.floor(TOTAL_TIME / (10*1000));
+			const N_EMPTY_DISK = 0; // Math.floor(TOTAL_TIME / (10*1000));
 			var emptyDiskTimes:Array;
+			
+			var inLineItems:Array = new Array();
 			
 			public static var _highscoreList;
 
@@ -130,10 +132,10 @@
 				_highscoreList = hightscoreList;
 				
 				// Init sounds
-				background1 = new sound1Class() as Sound;
-				background4 = new sound2Class() as Sound;
-				itemTaken = new sound3Class() as Sound;
-				clap = new sound4Class() as Sound;
+//				background1 = new sound1Class() as Sound;
+//				background4 = new sound2Class() as Sound;
+//				itemTaken = new sound3Class() as Sound;
+//				clap = new sound4Class() as Sound;
 				
 				this.frontBeltEllipse.center = new Point(gamePlayArea.width / 2, gamePlayArea.height / 2 + 20);
 				this.frontBeltEllipse.a = gamePlayArea.width / 2 + 200;
@@ -211,10 +213,11 @@
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
 				
-				tvcVideo.play();
+				//tvcVideo.play();
+				tvcImage.source = new tvcClass() as MovieClipAsset; 
 				
 				// Play background sound
-				background1Channel = background1.play(0,10);
+//				background1Channel = background1.play(0,10);
 			}
 			
 			public function stopGame() {
@@ -222,10 +225,11 @@
 				disableCurrentMode();
 				itemManager.stopAll();
 				
-				tvcVideo.stop();
+				//tvcVideo.stop();
+				tvcImage.source = new text01ImgCls() as BitmapAsset;
 				
 				// Stop sound
-				background4Channel.stop();
+//				background4Channel.stop();
 			}
 			
 			var lastDummyItem;
@@ -262,10 +266,10 @@
 				time.text = (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
 				
 				// Play other sound
-				if (remainingTime <= 15 * 1000 && background4Channel == null) {
-					background1Channel.stop();
-					background4Channel = background4.play(0,2);
-				}
+//				if (remainingTime <= 15 * 1000 && background4Channel == null) {
+//					background1Channel.stop();
+//					background4Channel = background4.play(0,2);
+//				}
 				
 				//handle back belt
 				if (itemsInFrontBelt.length > 0) {
@@ -404,7 +408,7 @@
 						}
 						if (caughtItem != null) {
 							// Play sound
-							itemTaken.play();
+//							itemTaken.play();
 							
 							itemsInFrontBelt.removeItemAt( itemsInFrontBelt.getItemIndex(caughtItem) );
 							caughtItem.moveEffect.freeze();
@@ -456,7 +460,61 @@
 											disappear.addEventListener(EffectEvent.EFFECT_END, 
 												function(event:Event) {
 													caughtItem.moveEffect.unfreeze();
+													
 													totalScore += caughtItem.score * scoreMultipliedBy;
+													
+													if (caughtItem.score > 0) {
+														var itemIdx = itemManager.findIndex(caughtItem);
+														var double:Boolean = false;
+														if (itemIdx > -1) {
+															inLineItems.push(itemIdx);
+															inLineItems.sort();
+															var itemsStr:String = inLineItems.join(",");
+															if (itemsStr == "2,3,4") {
+																totalScore = totalScore * 2;
+																double = true;
+																
+																txtCountDown.visible = true;
+																txtCountDown.text = "x2";
+																txtCountDown.styleName = "doubleScore";
+																txtCountDown.x = 420;
+																txtCountDown.y = 260;
+																effectScore.color = 0x0000FF;
+																effectScore.play([txtCountDown]);
+																
+																inLineItems = new Array();
+															}
+															else if (itemsStr != "2" && itemsStr != "3" && itemsStr != "4" 
+																&& itemsStr != "2,3" && itemsStr != "2,4" && itemsStr != "3,4") {
+																inLineItems = new Array();
+																inLineItems.push(itemIdx);
+															}
+														}
+														
+														if (double == false) {
+															// Show plus score
+															txtCountDown.visible = true;
+															txtCountDown.text = "+" + caughtItem.score.toString();
+															txtCountDown.styleName = "plusScore";
+															txtCountDown.x = 420;
+															txtCountDown.y = 260;
+															effectScore.color = 0x00FF00;
+															effectScore.play([txtCountDown]);
+														}
+													}
+													else if (caughtItem.score < 0) {
+														// Show minus score
+														txtCountDown.visible = true;
+														txtCountDown.text = caughtItem.score.toString();
+														txtCountDown.styleName = "minusScore";
+														txtCountDown.x = 420;
+														txtCountDown.y = 260;
+														effectScore.color = 0xFF0000;
+														effectScore.play([txtCountDown]);
+														
+														inLineItems = new Array();
+													}
+													
 													score.text = totalScore.toString();
 													resultScore.text = totalScore.toString();
 													caughtItem = null;
@@ -469,36 +527,36 @@
 														imgText.x = (forkContainer.width - 225) / 2;
 														imgText.y = 150;
 														zoomTextIn.play([imgText]);
-														clap.play();
+//														clap.play();
 													}
-													else if (totalScore < 2000 && totalScore >= 1500 && textEffectStr != "intelligent") {
-														bowl.source = new girl03ImgCls() as BitmapAsset;
+													else if (totalScore < 2000 && totalScore >= 1000 && textEffectStr != "intelligent") {
+														bowl.source = new girl04ImgCls() as BitmapAsset;
 														textEffectStr = "intelligent";
 														imgText.source = new text03ImgCls() as BitmapAsset;
 														imgText.x = (forkContainer.width - 240) / 2;
 														imgText.y = 150;
 														zoomTextIn.play([imgText]);
-														clap.play();
+//														clap.play();
 													}
-													else if (totalScore < 1500 && totalScore >= 1000 && textEffectStr != "great") {
+													else if (totalScore < 1000 && totalScore >= 700 && textEffectStr != "great") {
 														bowl.source = new girl03ImgCls() as BitmapAsset;
 														textEffectStr = "great";
 														imgText.source = new text02ImgCls() as BitmapAsset;
 														imgText.x = (forkContainer.width - 150) / 2;
 														imgText.y = 150;
 														zoomTextIn.play([imgText]);
-														clap.play();
+//														clap.play();
 													}
-													else if (totalScore < 1000 && totalScore >= 500 && textEffectStr != "good") {
+													else if (totalScore < 700 && totalScore >= 350 && textEffectStr != "good") {
 														bowl.source = new girl02ImgCls() as BitmapAsset;
 														textEffectStr = "good";
 														imgText.source = new text01ImgCls() as BitmapAsset;
 														imgText.x = (forkContainer.width - 148) / 2;
 														imgText.y = 150;
 														zoomTextIn.play([imgText]);
-														clap.play();
+//														clap.play();
 													}
-													else if (totalScore < 1000 && totalScore >= 100 && textEffectStr != "good") {
+													else if (totalScore < 1000 && totalScore >= 0 && textEffectStr != "good") {
 														bowl.source = new girl02ImgCls() as BitmapAsset;
 													}
 												}
@@ -608,14 +666,14 @@
 							
 							// Move the target with some easing
 							moveEffectOfFork.stop();
-							moveEffectOfFork.xTo = gamePlayArea.width - motionX;
+							moveEffectOfFork.xTo = forkContainer.width - motionX;
 							moveEffectOfFork.yTo = FORK_Y;
 							moveEffectOfFork.play();
 //							if (Math.abs(gamePlayArea.y + gamePlayArea.height - motionY) < 100) {
 //								forkDown();
 //							}
 //							if (motionTracker.motionArea.y > camH * 1.5) {
-							if ((motionY) > 300) {
+							if (motionY > 300) {
 								forkDown();
 							}
 //							if (motionY > 330) {
@@ -747,13 +805,14 @@
 	<mx:Canvas id="gamePlayArea" x="{GAME_PLAY_AREA_X}" y="{GAME_PLAY_AREA_Y}" width="{GAME_PLAY_AREA_W}" height="{GAME_PLAY_AREA_H}" 
 			   horizontalScrollPolicy="off" verticalScrollPolicy="off">
 		<mx:Canvas id="tvcBackground" styleName="backgroundTVC" width="179" height="106" x="10" y="10">
-			<mx:VideoDisplay id="tvcVideo" width="161" height="90" source="http://mekongmedia.com.vn/reeva3mien/tvc.flv" autoPlay="false" x="9" y="8">
+			<mx:Image id="tvcImage" width="161" height="90" x="9" y="8" />
+			<!--<mx:VideoDisplay id="tvcVideo" width="161" height="90" source="http://mekongmedia.com.vn/reeva3mien/tvc.flv" autoPlay="false" x="9" y="8">
 				<mx:complete>
 					<![CDATA[
 						tvcVideo.play();
 					]]>
 				</mx:complete>
-			</mx:VideoDisplay>
+			</mx:VideoDisplay>-->
 		</mx:Canvas>
 	</mx:Canvas>
 	
@@ -789,6 +848,17 @@
 	<mx:Image id="imgText" />
 	
 	<mx:Zoom id="zoomIn" zoomWidthFrom="0" zoomWidthTo="1" zoomHeightFrom="0" zoomHeightTo="1" duration="300"/>
+	
+	<mx:Glow id="effectScore" easingFunction="{Bounce.easeInOut}" duration="3000"
+			 alphaFrom="1.0" alphaTo="0.3"
+			 blurXFrom="0.0" blurXTo="50.0"
+			 blurYFrom="0.0" blurYTo="50.0">
+		<mx:effectEnd>
+			<![CDATA[
+			txtCountDown.visible = false;
+			]]>
+		</mx:effectEnd>
+	</mx:Glow>
 	
 	<mx:Zoom id="zoomTextIn" zoomWidthFrom="0" zoomWidthTo="1" zoomHeightFrom="0" zoomHeightTo="1" easingFunction="{Bounce.easeOut}" duration="2000">
 		<mx:effectEnd>
