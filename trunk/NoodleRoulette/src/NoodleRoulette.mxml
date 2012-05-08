@@ -89,10 +89,6 @@
 			
 			private var textEffectStr:String = "no";
 			
-			[Embed(source="assets/TVC.swf")]
-			[Bindable]
-			private var tvcClass:Class;
-			
 			var loader:Loader;
 			
 			const TOTAL_TIME = 60 * 1000; //TODO
@@ -215,7 +211,7 @@
 				mainTimer.addEventListener(TimerEvent.TIMER, onTimer);
 				mainTimer.start();
 				
-				tvcImage.source = new tvcClass() as MovieClipAsset;
+				tvcVideo.play();
 				
 				// Play background sound
 				background1Channel = background1.play(0,10);
@@ -225,6 +221,8 @@
 				mainTimer.stop();
 				disableCurrentMode();
 				itemManager.stopAll();
+				
+				tvcVideo.stop();
 				
 				// Stop sound
 				background4Channel.stop();
@@ -749,7 +747,13 @@
 	<mx:Canvas id="gamePlayArea" x="{GAME_PLAY_AREA_X}" y="{GAME_PLAY_AREA_Y}" width="{GAME_PLAY_AREA_W}" height="{GAME_PLAY_AREA_H}" 
 			   horizontalScrollPolicy="off" verticalScrollPolicy="off">
 		<mx:Canvas id="tvcBackground" styleName="backgroundTVC" width="179" height="106" x="10" y="10">
-			<mx:Image id="tvcImage" width="161" height="90" x="9" y="8" />
+			<mx:VideoDisplay id="tvcVideo" width="161" height="90" source="http://mekongmedia.com.vn/reeva3mien/tvc.flv" autoPlay="false" x="9" y="8">
+				<mx:complete>
+					<![CDATA[
+						tvcVideo.play();
+					]]>
+				</mx:complete>
+			</mx:VideoDisplay>
 		</mx:Canvas>
 	</mx:Canvas>
 	
